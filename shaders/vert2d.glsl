@@ -16,7 +16,7 @@ out vec4 newColor;
 void main()
 {
 
-    gl_Position = proj * view * trfm * vec4(position, 0.0f, 1.0f) ;
+    gl_Position = proj * view * trfm * vec4(position, 0.0f, 1.0f);
 
     newColor = color;
 }

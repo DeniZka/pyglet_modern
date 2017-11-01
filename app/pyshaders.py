@@ -700,6 +700,7 @@ class ShaderProgram(object):
             Also reload the uniform cache is successful
         """
         glLinkProgram(self.pid)
+        self.detach(*self.shaders(), delete=False) # always! detach shaders after link successful or not
         if self.link_status == GL_TRUE:
             self.uniforms.reload()
             self.attributes.reload()

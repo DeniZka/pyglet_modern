@@ -22,12 +22,18 @@ uniform mat4 scale = mat4(
     0.0, 0.0, 1.0, 0.0,
     0.0, 0.0, 0.0, 1.0
 );
+uniform mat4 parent = mat4(
+    1.0, 0.0, 0.0, 0.0,
+    0.0, 1.0, 0.0, 0.0,
+    0.0, 0.0, 1.0, 0.0,
+    0.0, 0.0, 0.0, 1.0
+);
 
 out vec2 textures;
 
 
 void main()
 {
-    gl_Position = proj * view * translation * rotation * scale * vec4(position, 1.0f) ;
+    gl_Position = proj * view * parent * translation * rotation * scale * vec4(position, 1.0f) ;
     textures = vec2(textureCoords.x, 1 - textureCoords.y);
 }

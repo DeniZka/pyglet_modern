@@ -7,7 +7,7 @@ from app.ObjLoader import ObjLoader
 from app import pyshaders
 
 import esper
-from app.p_window import WindowProcessor
+import time
 
 main_batch = pyglet.graphics.Batch()
 batch2d = pyglet.graphics.Batch()
@@ -30,12 +30,48 @@ tri = [
     0.0*10, 1.0*10,
     -0.0*10, 0.0*10
 ]
+active_shader_pid = 0
+
+
+class AbstractTransform(pyglet.graphics.Group):
+    def __init__(self, transform_matrix=None, parent=None):
+        super().__init__()
+        self.parent = parent
+        self._tr = transform_matrix
+        if self._tr is None:
+            self._tr = Matrix44.identity()
+        self._gtr = self._tr  # global transform include parent transformations
+        if self.parent:
+            self._gtr = self.parent.transform * self._tr
+        self.dirty = False  # global transform calculated
+
+    @property
+    def local_transform(self):
+        return self._tr
+
+    @property
+    def transform(self):
+        """
+
+        :return: Total transform matrix
+        """
+        if self.parent:
+            if self.dirty:
+                self._gtr = self.parent.transform * self._tr
+        else:
+            if self.dirty:
+                self._gtr = self._tr
+        return self._gtr
+
+    @transform.setter
+    def transform(self, val):
+        self._tr = val
+        self.dirty = True
 
 
 
 
-
-class TexturedObject(pyglet.graphics.Group):
+class TexturedObject(AbstractTransform):
     active_program = 0
 
     def __init__(self, shader, mesh, image):
@@ -83,6 +119,7 @@ class TexturedObject(pyglet.graphics.Group):
         mesh = ObjLoader()
         mesh.load_model(model_fn)
         image = pyglet.image.load(tex_fn)
+        #image = pyglet.resource.image(tex_fn, False).image_data TODO:use single texture
         return cls(shader, mesh, image)
 
     @property
@@ -113,24 +150,27 @@ class TexturedObject(pyglet.graphics.Group):
 
     def set_state(self):
         #glUseProgram(self.shader.id)
-        self.shader.use()
+        global active_shader_pid
+        if self.shader.pid != active_shader_pid:
+            self.shader.use()
+            active_shader_pid = self.shader.pid
         # vertices
         self.shader.attributes.position.enable()
         self.shader.attributes.position.point_to(self.verts.vertices, GL_FLOAT, 3)
 
         # vertices uniforms
-        if self.dirty:
-            trans = matrix44.create_from_translation(self.pos)
-            rot = matrix44.create_from_y_rotation(self._angle)
-            #rot = matrix44.create_from_quaternion(self._rotq) #inverse_of_quaternion(self._rotq)
-            scale = matrix44.create_from_scale(self.scale)
-            self.shader.uniforms.translation = trans
-            self.shader.uniforms.rotation = rot
-            self.shader.uniforms.scale = scale
-            self.dirty = False
-        if projection_dirty:
-            self.shader.uniforms.proj = projection
-            self.shader.uniforms.view = view
+    #if self.dirty:
+        trans = matrix44.create_from_translation(self.pos)
+        rot = matrix44.create_from_y_rotation(self._angle)
+        #rot = matrix44.create_from_quaternion(self._rotq) #inverse_of_quaternion(self._rotq)
+        scale = matrix44.create_from_scale(self.scale)
+        self.shader.uniforms.translation = trans
+        self.shader.uniforms.rotation = rot
+        self.shader.uniforms.scale = scale
+        self.dirty = False
+    #if projection_dirty:
+        self.shader.uniforms.proj = projection
+        self.shader.uniforms.view = view
 
         # textures
         self.shader.attributes.textureCoords.enable()
@@ -145,16 +185,9 @@ class TexturedObject(pyglet.graphics.Group):
         self.shader.attributes.position.disable()
         self.shader.attributes.textureCoords.disable()
 
-    def update(self, dt):
-        #self.ta += 0.1 * dt
-        self.rotate_local(dt)
-        self._angle += dt
-        #self.r += dt
-        #self.scale[0] = math.sin(self.r) + 2
-        self.dirty = True
 
 
-class Poly2D(pyglet.graphics.Group):
+class Poly2D(AbstractTransform):
     def __init__(self, shader, vertices, type=GL_TRIANGLES):
         super().__init__()
         self.time = 0.0
@@ -216,7 +249,10 @@ class Poly2D(pyglet.graphics.Group):
 
 
     def set_state(self):
-        self.shader.use()
+        global active_shader_pid
+        if self.shader.pid != active_shader_pid:
+            self.shader.use()
+            active_shader_pid = self.shader.pid
 
         # vertices
         glEnableVertexAttribArray(0)
@@ -243,79 +279,38 @@ class Poly2D(pyglet.graphics.Group):
         glDisableVertexAttribArray(1)
         self.dirty = False
 
-    def update(self, dt):
-        self.time += dt
 
-class LabelGrp(pyglet.graphics.Group):
+class MoveProcessor(esper.Processor):
     def __init__(self):
         super().__init__()
 
-    def set_state(self):
-        return
+    def process(self, dt):
+        for e, to in self.world.get_component(TexturedObject):
+            # self.ta += 0.1 * dt
+            to.rotate_local(dt)
+            to._angle += dt
+            # self.r += dt
+            # self.scale[0] = math.sin(self.r) + 2
+            to.dirty = True
 
-    def unset_state(self):
-        return
+        for e, poly in self.world.get_component(Poly2D):
+            poly.time += dt
 
 
-class MyWindow(pyglet.window.Window):
+class WindowProcessor(pyglet.window.Window, esper.Processor):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.set_minimum_size(400, 300)
         glClearColor(0.2, 0.2, 0.2, 1.0)
         self.fps_display = pyglet.clock.ClockDisplay()
 
-        self.cube = []
-        ps = pyshaders.from_files_names("shaders/vert2d.glsl", "shaders/space.glsl")
-        ps.use()
-        ps.uniforms.proj = projection
-        ps.uniforms.view = view
-        p = Poly2D(ps, tri)
-        #p.pos = [10.0, 0.0]
-        p.angle = 1.0
-        p.scale = [1.0, 2.0]
-        p.color = [1.0, 0.0, 0.0, 1.0,
-                   0.0, 1.0, 0.0, 1.0,
-                   0.0, 0.0, 1.0, 1.0]
-        self.p = p
-
-        c_shader = pyshaders.from_files_names("shaders/vert3d.glsl", "shaders/frag3d.glsl")
-        c_shader.use()
-        c_shader.uniforms.proj = projection
-        c_shader.uniforms.view = view
-        self.xmas = TexturedObject.from_file(c_shader, "models/cube.obj", 'models/cube.jpg')
-        self.xmas.pos = [10.0, 10.0, 0.0]
-
-        c_shader = pyshaders.from_files_names("shaders/vert3d.glsl", "shaders/frag3d.glsl")
-        c_shader.use()
-        c_shader.uniforms.proj = projection
-        c_shader.uniforms.view = view
-        std = TexturedObject.from_file(c_shader, "models/xmas_tree.obj", 'models/xmas_texture.jpg')
-        std.pos = [10.0, 0.0, 0.0]
-        for i in range(100):
-            cb = TexturedObject(c_shader, std.mesh, std.image)
-            cb.pos = [randint(-10, 10), randint(-10, 10), randint(-10, 10)]
-            v = (triangular(), triangular(), triangular())
-            #v = (0.0, 1.0, 1.0)
-            a = triangular() #math.pi/2
-            q = quaternion.create_from_axis_rotation(v, a)
-            #m = matrix44.create_from_quaternion(q)#inverse_of_quaternion(q)
-            #cb.angle = randint(-10, 10) / 10
-            cb.angle = q
-            self.cube.append(cb)
-        m_shader = pyshaders.from_files_names("shaders/vert3d.glsl", "shaders/frag3d.glsl")
-        m_shader.uniforms.proj = projection
-        m_shader.uniforms.view = view
-        #self.monkey = Monkey(m_shader)
-        self.monkey = TexturedObject.from_file(m_shader, 'models/monkey.obj', 'models/monkey.jpg')
-
         self.label = pyglet.text.Label('Hello, world',
                               font_size=36,
                               x=10, y=100)
 
-
     def on_draw(self):
         self.clear()
-
+        ts = time.time()
         # draw 3D Modern OpenGL
         glEnable(GL_DEPTH_TEST)
         main_batch.draw()
@@ -329,6 +324,7 @@ class MyWindow(pyglet.window.Window):
         batch2d.draw()
         pyshaders.ShaderProgram.clear()  # or simply glUseProgram(0)
 
+        print(1/(time.time() - ts))
         # reset projection is dirty
         global projection_dirty
         if projection_dirty:
@@ -355,16 +351,6 @@ class MyWindow(pyglet.window.Window):
             zoom -= zoom * 0.1
         self.calc_projection()
 
-    def update(self, dt):
-        self.monkey.update(dt)
-        for cb in self.cube:
-            cb.update(dt)
-        self.xmas.update(dt)
-        self.p.update(dt)
-        for i in range(10):
-            self.cube[i].update(dt)
-
-
     # self methods
     def calc_projection(self):
         global projection, view, projection_dirty
@@ -386,12 +372,62 @@ class MyWindow(pyglet.window.Window):
         )
         projection_dirty = True
 
+    def process(self, dt):
+        pass
+
 def run(args=None):
     world = esper.World()
     window = WindowProcessor(1280, 720, "My Pyglet Window", resizable=True)
     world.add_processor(window)
+    world.add_processor(MoveProcessor())
 
-    window = MyWindow(1280, 720, "My Pyglet Window", resizable=True)
-    pyglet.clock.schedule_interval(window.update, 1/60.0)
+    # FACTORY
+    ps = pyshaders.from_files_names("shaders/vert2d.glsl", "shaders/space.glsl")
+    ps.use()
+    ps.uniforms.proj = projection
+    ps.uniforms.view = view
+    p = Poly2D(ps, tri)
+    # p.pos = [10.0, 0.0]
+    p.angle = 1.0
+    p.scale = [1.0, 2.0]
+    p.color = [1.0, 0.0, 0.0, 1.0,
+               0.0, 1.0, 0.0, 1.0,
+               0.0, 0.0, 1.0, 1.0]
+    world.create_entity(p)
+
+    c_shader = pyshaders.from_files_names("shaders/vert3d.glsl", "shaders/frag3d.glsl")
+    c_shader.use()
+    c_shader.uniforms.proj = projection
+    c_shader.uniforms.view = view
+    xmas = TexturedObject.from_file(c_shader, "models/cube.obj", 'models/cube.jpg')
+    xmas.pos = [10.0, 10.0, 0.0]
+    world.create_entity(xmas)
+
+    std = TexturedObject.from_file(c_shader, "models/xmas_tree.obj", 'models/xmas_texture.jpg')
+    std.pos = [10.0, 0.0, 0.0]
+    world.create_entity(std)
+
+    for i in range(20):
+        cb = TexturedObject(c_shader, std.mesh, std.image)
+        cb.pos = [randint(-10, 10), randint(-10, 10), randint(-10, 10)]
+        world.create_entity(cb)
+        v = (triangular(), triangular(), triangular())
+        # v = (0.0, 1.0, 1.0)
+        a = triangular()  # math.pi/2
+        q = quaternion.create_from_axis_rotation(v, a)
+        # m = matrix44.create_from_quaternion(q)#inverse_of_quaternion(q)
+        # cb.angle = randint(-10, 10) / 10
+        cb.angle = q
+    m_shader = pyshaders.from_files_names("shaders/vert3d.glsl", "shaders/frag3d.glsl")
+    m_shader.uniforms.proj = projection
+    m_shader.uniforms.view = view
+    # self.monkey = Monkey(m_shader)
+    monkey = TexturedObject.from_file(m_shader, 'models/monkey.obj', 'models/monkey.jpg')
+    world.create_entity(monkey)
+
+    # END FACTORY
+
+    #window = MyWindow(1280, 720, "My Pyglet Window", resizable=True)
+    pyglet.clock.schedule_interval(world.process, 1/60.0)
     pyglet.app.run()
     return

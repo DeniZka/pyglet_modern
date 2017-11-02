@@ -1,5 +1,5 @@
 #version 330
-layout(location = 0) in vec3 position;
+layout(location = 0) in vec3 position; //important thing! pyglet push vertixes there
 layout(location = 1) in vec2 textureCoords;
 
 uniform int coloring = 0;

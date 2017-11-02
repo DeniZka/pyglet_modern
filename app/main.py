@@ -43,6 +43,8 @@ class CameraGrp(pyglet.graphics.Group):
     """
     def __init__(self, shader, parent=None):
         super().__init__(parent=parent)
+        self.width = 1280
+        self.height = 720
         self.shader = shader
         self.projection = matrix44.create_orthogonal_projection(
             -1280 / 2 / zoom, 1280 / 2 / zoom,
@@ -54,6 +56,10 @@ class CameraGrp(pyglet.graphics.Group):
             (0.0, 0.0, 0.0),
             (0.0, 1.0, 0.1)
         )
+        self.default_proj = matrix44.create_orthogonal_projection(
+            0, self.width, 0, 720, -1, 1
+        )
+        self.default_view = matrix44.create_identity()
 
     def set_state(self):
         self.shader.uniforms.proj = projection  # self.projection
@@ -61,7 +67,8 @@ class CameraGrp(pyglet.graphics.Group):
 
     def unset_state(self):
         # TODO reset to default view
-        pass
+        self.shader.uniforms.proj = self.default_proj
+        self.shader.uniforms.view = self.default_view
 
     def zoom(self):
         # TODO zoom and another features
@@ -91,7 +98,7 @@ class ShaderGrp(pyglet.graphics.Group):
         """
         return prevous shader
         """
-        glUseProgram(self.bak_shader_pid)
+        #glUseProgram(self.bak_shader_pid)
         self.active_shader_pid = self.bak_shader_pid
 
 
@@ -218,7 +225,7 @@ class TexturedObject(AbstractTransform):
         #mesh.load_model(model_fn)
         num_verts = len(mesh.model_vertices) // 3
         self.verts = main_batch.add(num_verts, GL_TRIANGLES, self, ('v3f', mesh.model_vertices),
-                                                                    ('t2f', mesh.model_textures))
+                                                                   ('1g2f', mesh.model_textures))
 
         # region texture settings
         self.texture = GLuint(0)
@@ -275,8 +282,8 @@ class TexturedObject(AbstractTransform):
             self.shader.use()
             active_shader_pid = self.shader.pid
         # vertices
-        self.shader.attributes.position.enable()
-        self.shader.attributes.position.point_to(self.verts.vertices, GL_FLOAT, 3)
+        #self.shader.attributes.position.enable()
+        #self.shader.attributes.position.point_to(self.verts.vertices, GL_FLOAT, 3)
 
         # vertices uniforms
     #if self.dirty:
@@ -293,14 +300,12 @@ class TexturedObject(AbstractTransform):
 
         # textures
         self.shader.uniforms.coloring = 0
-        self.shader.attributes.textureCoords.enable()
-        self.shader.attributes.textureCoords.point_to(self.verts.tex_coords, GL_FLOAT, 2)
-
         glBindTexture(GL_TEXTURE_2D, self.texture)
 
     def unset_state(self):
-        self.shader.attributes.position.disable()
-        self.shader.attributes.textureCoords.disable()
+        #self.shader.attributes.position.disable()
+        #self.shader.attributes.textureCoords.disable()
+        pass
 
 
 
@@ -324,15 +329,7 @@ class Poly2D(AbstractTransform):
                 self._color.append(triangular(0.0, 1.0))
             self._color.append(triangular(0.7, 1.0))
 
-        self.verts = main_batch.add(num_verts, type, self, ('v2f', vertices), ('c4f', self._color))
-
-    @property
-    def color(self):
-        return self.verts.colors
-
-    @color.setter
-    def color(self, val):
-        self.verts.colors = val
+        self.verts = main_batch.add(num_verts, type, self, ('v2f', vertices), ('1g4f', self._color))
 
     @property
     def angle(self):
@@ -371,34 +368,27 @@ class Poly2D(AbstractTransform):
             self.shader.use()
             active_shader_pid = self.shader.pid
 
-        # vertices
-        glEnableVertexAttribArray(0)
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, self.verts.vertices)
-
         # vertices uniforms
-        if self.dirty:
-            self._trfm = self._pos * self._rot * self._scale
-            self.shader.uniforms.trfm = self._trfm
+        rot = matrix44.create_from_y_rotation(0.0)
+        self.shader.uniforms.rotation = rot
+        self._trfm = self._pos * self._rot * self._scale
+        self.shader.uniforms.trfm = self._trfm
 
         #texture uniform
         self.shader.uniforms.coloring = 1
         self.shader.uniforms.time = self.time
 
-        glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, self.verts.colors)
-        glEnableVertexAttribArray(1)
-
     def unset_state(self):
-        #glUseProgram(0)
-        glDisableVertexAttribArray(0)
-        glDisableVertexAttribArray(1)
         self.dirty = False
 
 
 class MoveProcessor(esper.Processor):
     def __init__(self):
         super().__init__()
+        self.time = 0.0
 
     def process(self, dt):
+        self.time += dt
         for e, to in self.world.get_component(TexturedObject):
             # self.ta += 0.1 * dt
             to.rotate_local(dt)
@@ -409,6 +399,13 @@ class MoveProcessor(esper.Processor):
 
         for e, poly in self.world.get_component(Poly2D):
             poly.time += dt
+            if self.time > 3:
+                poly.verts.vertices = [
+    1.0*20, 0.0*20,
+    0.0*20, 1.0*20,
+    -0.0*20, 0.0*20
+]
+
 
 
 class WindowProcessor(pyglet.window.Window, esper.Processor):
@@ -431,12 +428,12 @@ class WindowProcessor(pyglet.window.Window, esper.Processor):
         #print(1/(time.time() - ts))
 
         # Legacy OpenGL
-        glMatrixMode(gl.GL_PROJECTION)
-        glLoadIdentity()
-        glOrtho(0, self.width, 0, self.height, -1, 1)
-        glMatrixMode(gl.GL_MODELVIEW)
+        #glMatrixMode(gl.GL_PROJECTION)
+        #glLoadIdentity()
+        #glOrtho(0, self.width, 0, self.height, -1, 1)
+        #glMatrixMode(gl.GL_MODELVIEW)
 
-        self.fps_display.draw()
+        #self.fps_display.draw()
         self.label.draw()
 
     def on_resize(self, width, height):
@@ -495,9 +492,6 @@ def run(args=None):
     # p.pos = [10.0, 0.0]
     p.angle = 1.0
     p.scale = [1.0, 2.0]
-    p.color = [1.0, 0.0, 0.0, 1.0,
-               0.0, 1.0, 0.0, 1.0,
-               0.0, 0.0, 1.0, 1.0]
     world.create_entity(p)
 
     xmas = TexturedObject.from_file(c_shader, "models/cube.obj", 'models/cube.jpg', texture_grp)

@@ -56,8 +56,8 @@ class CameraGrp(pyglet.graphics.Group):
         )
 
     def set_state(self):
-        active_shader.uniforms.proj = self.projection
-        active_shader.uniforms.view = self.view
+        self.shader.uniforms.proj = projection  # self.projection
+        self.shader.uniforms.view = view  # self.view
 
     def unset_state(self):
         # TODO reset to default view
@@ -108,12 +108,13 @@ class ShaderSwitchColoringGrp(pyglet.graphics.Group):
         self.shader.uniforms.coloring = 0
 
 
-class DepthTestGrp(pyglet.graphics.Group):
+class DepthTestGrp(pyglet.graphics.OrderedGroup):
     """
     Group for 3D objects
+    Seems must be first ordered to draw blend futurer
     """
-    def __init__(self, parent=None):
-        super().__init__(parent=parent)
+    def __init__(self, order, parent=None):
+        super().__init__(order, parent=parent)
 
     def set_state(self):
         glEnable(GL_DEPTH_TEST)
@@ -122,15 +123,13 @@ class DepthTestGrp(pyglet.graphics.Group):
         glDisable(GL_DEPTH_TEST)
 
 
-depth_grp = DepthTestGrp()
-
-
-class BlendGrp(pyglet.graphics.Group):
+class BlendGrp(pyglet.graphics.OrderedGroup):
     """
     Group for 2D objects
+    Must have lowest order to blend last
     """
-    def __init__(self, parent=None):
-        super().__init__(parent=parent)
+    def __init__(self, order, parent=None):
+        super().__init__(order, parent=parent)
 
     def set_state(self):
         glEnable(GL_BLEND)
@@ -139,8 +138,18 @@ class BlendGrp(pyglet.graphics.Group):
     def unset_state(self):
         glDisable(GL_BLEND)
 
+class EnableTextureGrp(pyglet.graphics.Group):
+    """
+    Texture enabling group
+    """
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
 
-blend_grp = BlendGrp()
+    def set_state(self):
+        glEnable(GL_TEXTURE_2D)
+
+    def unset_state(self):
+        glDisable(GL_TEXTURE_2D)
 
 
 class AbstractTransform(pyglet.graphics.Group):
@@ -153,7 +162,7 @@ class AbstractTransform(pyglet.graphics.Group):
         if self._tr is None:
             self._tr = Matrix44.identity()
         self._gtr = self._tr  # global transform include parent transformations
-        if self.parent:
+        if self.parent and self.parent.__class__ is AbstractTransform:
             self._gtr = self.parent.transform * self._tr
         self.dirty = False  # global transform calculated
 
@@ -228,12 +237,12 @@ class TexturedObject(AbstractTransform):
         # endregion
 
     @classmethod
-    def from_file(cls, shader, model_fn, tex_fn):
+    def from_file(cls, shader, model_fn, tex_fn, parent=None):
         mesh = ObjLoader()
         mesh.load_model(model_fn)
         image = pyglet.image.load(tex_fn)
         #image = pyglet.resource.image(tex_fn, False).image_data TODO:use single texture
-        return cls(shader, mesh, image)
+        return cls(shader, mesh, image, parent)
 
     @property
     def angle(self):
@@ -259,8 +268,6 @@ class TexturedObject(AbstractTransform):
         self._rotq = q * self._rotq
         self.dirty = True
 
-
-
     def set_state(self):
         #glUseProgram(self.shader.id)
         global active_shader_pid
@@ -283,21 +290,15 @@ class TexturedObject(AbstractTransform):
         self.shader.uniforms.rotation = rot
         self.shader.uniforms.scale = scale
         self.dirty = False
-    #if projection_dirty:
-        self.shader.uniforms.proj = projection
-        self.shader.uniforms.view = view
 
         # textures
         self.shader.uniforms.coloring = 0
         self.shader.attributes.textureCoords.enable()
         self.shader.attributes.textureCoords.point_to(self.verts.tex_coords, GL_FLOAT, 2)
 
-        glEnable(GL_TEXTURE_2D)
         glBindTexture(GL_TEXTURE_2D, self.texture)
 
     def unset_state(self):
-        #glUseProgram(0)
-        glDisable(GL_TEXTURE_2D)
         self.shader.attributes.position.disable()
         self.shader.attributes.textureCoords.disable()
 
@@ -378,10 +379,6 @@ class Poly2D(AbstractTransform):
         if self.dirty:
             self._trfm = self._pos * self._rot * self._scale
             self.shader.uniforms.trfm = self._trfm
-        if projection_dirty:
-            self.shader.uniforms.proj = projection
-            self.shader.uniforms.view = view
-
 
         #texture uniform
         self.shader.uniforms.coloring = 1
@@ -414,9 +411,6 @@ class MoveProcessor(esper.Processor):
             poly.time += dt
 
 
-
-
-
 class WindowProcessor(pyglet.window.Window, esper.Processor):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -430,24 +424,11 @@ class WindowProcessor(pyglet.window.Window, esper.Processor):
 
     def on_draw(self):
         self.clear()
-        ts = time.time()
+        #ts = time.time()
         # draw 3D Modern OpenGL
-        glEnable(GL_DEPTH_TEST)
         main_batch.draw()
-        glDisable(GL_DEPTH_TEST)
 
-        # draw 2D
-        glEnable(GL_BLEND)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-
-        # Modern OpenGL 2D drawning
-        pyshaders.ShaderProgram.clear()  # or simply glUseProgram(0)
-
-        print(1/(time.time() - ts))
-        # reset projection is dirty
-        global projection_dirty
-        if projection_dirty:
-            projection_dirty = False
+        #print(1/(time.time() - ts))
 
         # Legacy OpenGL
         glMatrixMode(gl.GL_PROJECTION)
@@ -494,6 +475,7 @@ class WindowProcessor(pyglet.window.Window, esper.Processor):
     def process(self, dt):
         pass
 
+
 def run(args=None):
     world = esper.World()
     window = WindowProcessor(1280, 720, "My Pyglet Window", resizable=True)
@@ -503,11 +485,13 @@ def run(args=None):
     # FACTORY
     c_shader = pyshaders.from_files_names("shaders/vert3d.glsl", "shaders/frag3d.glsl")
     sgrp = ShaderGrp(c_shader)
-    c_shader.use()
-    c_shader.uniforms.proj = projection
-    c_shader.uniforms.view = view
 
-    p = Poly2D(c_shader, tri)
+    camera_grp = CameraGrp(c_shader, sgrp)
+    depth_grp = DepthTestGrp(0, camera_grp)
+    texture_grp = EnableTextureGrp(depth_grp)
+    blend_grp = BlendGrp(1, camera_grp)
+
+    p = Poly2D(c_shader, tri, parent=blend_grp)
     # p.pos = [10.0, 0.0]
     p.angle = 1.0
     p.scale = [1.0, 2.0]
@@ -516,17 +500,16 @@ def run(args=None):
                0.0, 0.0, 1.0, 1.0]
     world.create_entity(p)
 
-
-    xmas = TexturedObject.from_file(c_shader, "models/cube.obj", 'models/cube.jpg')
+    xmas = TexturedObject.from_file(c_shader, "models/cube.obj", 'models/cube.jpg', texture_grp)
     xmas.pos = [10.0, 10.0, 0.0]
     world.create_entity(xmas)
 
-    std = TexturedObject.from_file(c_shader, "models/xmas_tree.obj", 'models/xmas_texture.jpg')
+    std = TexturedObject.from_file(c_shader, "models/xmas_tree.obj", 'models/xmas_texture.jpg', texture_grp)
     std.pos = [10.0, 0.0, 0.0]
     world.create_entity(std)
 
     for i in range(20):
-        cb = TexturedObject(c_shader, std.mesh, std.image)
+        cb = TexturedObject(c_shader, std.mesh, std.image, depth_grp)
         cb.pos = [randint(-10, 10), randint(-10, 10), randint(-10, 10)]
         world.create_entity(cb)
         v = (triangular(), triangular(), triangular())
@@ -536,11 +519,10 @@ def run(args=None):
         # m = matrix44.create_from_quaternion(q)#inverse_of_quaternion(q)
         # cb.angle = randint(-10, 10) / 10
         cb.angle = q
-    m_shader = pyshaders.from_files_names("shaders/vert3d.glsl", "shaders/frag3d.glsl")
-    m_shader.uniforms.proj = projection
-    m_shader.uniforms.view = view
+        cb._angle = randint(-10, 10)
+
     # self.monkey = Monkey(m_shader)
-    monkey = TexturedObject.from_file(m_shader, 'models/monkey.obj', 'models/monkey.jpg')
+    monkey = TexturedObject.from_file(c_shader, 'models/monkey.obj', 'models/monkey.jpg', texture_grp)
     world.create_entity(monkey)
 
     # END FACTORY

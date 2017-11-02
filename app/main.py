@@ -5,6 +5,7 @@ from pyrr import matrix44, Matrix44, quaternion
 
 from app.ObjLoader import ObjLoader
 from app import pyshaders
+from ctypes import c_bool
 
 import esper
 import time
@@ -32,11 +33,122 @@ tri = [
 ]
 active_shader_pid = 0
 
+active_shader = None
+
+
+class CameraGrp(pyglet.graphics.Group):
+    """
+    Group that enable camera
+    transformation to uniforms
+    """
+    def __init__(self, shader, parent=None):
+        super().__init__(parent=parent)
+        self.shader = shader
+        self.projection = matrix44.create_orthogonal_projection(
+            -1280 / 2 / zoom, 1280 / 2 / zoom,
+            -720 / 2 / zoom, 720 / 2 / zoom,
+            -100, 100
+        )
+        self.view = matrix44.create_look_at(
+            (0.0, 0.0, 1.0),
+            (0.0, 0.0, 0.0),
+            (0.0, 1.0, 0.1)
+        )
+
+    def set_state(self):
+        active_shader.uniforms.proj = self.projection
+        active_shader.uniforms.view = self.view
+
+    def unset_state(self):
+        # TODO reset to default view
+        pass
+
+    def zoom(self):
+        # TODO zoom and another features
+        pass
+
+
+class ShaderGrp(pyglet.graphics.Group):
+    """
+    Group for shader accessors
+    """
+    active_shader_pid = 0
+
+    def __init__(self, shader, parent=None):
+        super().__init__(parent=parent)
+        self.shader = shader
+        self.bak_shader_pid = 0
+
+    def set_state(self):
+        """
+        set this shader
+        """
+        self.shader.use()
+        self.bak_shader_pid = self.active_shader_pid
+        self.active_shader_pid = self.shader.pid
+
+    def unset_state(self):
+        """
+        return prevous shader
+        """
+        glUseProgram(self.bak_shader_pid)
+        self.active_shader_pid = self.bak_shader_pid
+
+
+class ShaderSwitchColoringGrp(pyglet.graphics.Group):
+    def __init__(self, shader, parent=None):
+        super().__init__(parent=parent)
+        self.shader = shader
+
+    def set_state(self):
+        #FIXME test this or use - ctypes
+        self.shader.uniforms.coloring = 1
+
+    def unset_state(self):
+        self.shader.uniforms.coloring = 0
+
+
+class DepthTestGrp(pyglet.graphics.Group):
+    """
+    Group for 3D objects
+    """
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+
+    def set_state(self):
+        glEnable(GL_DEPTH_TEST)
+
+    def unset_state(self):
+        glDisable(GL_DEPTH_TEST)
+
+
+depth_grp = DepthTestGrp()
+
+
+class BlendGrp(pyglet.graphics.Group):
+    """
+    Group for 2D objects
+    """
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+
+    def set_state(self):
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
+    def unset_state(self):
+        glDisable(GL_BLEND)
+
+
+blend_grp = BlendGrp()
+
 
 class AbstractTransform(pyglet.graphics.Group):
+    """
+    Unifrom transfromation access group
+    """
     def __init__(self, transform_matrix=None, parent=None):
-        super().__init__()
-        self.parent = parent
+        super().__init__(parent=parent)
         self._tr = transform_matrix
         if self._tr is None:
             self._tr = Matrix44.identity()
@@ -68,14 +180,15 @@ class AbstractTransform(pyglet.graphics.Group):
         self._tr = val
         self.dirty = True
 
-
+    def set_state(self):
+        active_shader.uniforms.trfm = self._gtr
 
 
 class TexturedObject(AbstractTransform):
     active_program = 0
 
-    def __init__(self, shader, mesh, image):
-        super().__init__()
+    def __init__(self, shader, mesh, image, parent=None):
+        super().__init__(parent=parent)
         self.time = 0.0 #tempraty time
         self.ta = 0.0 #tempraty angle
         self._rot = Matrix44.identity()
@@ -160,10 +273,12 @@ class TexturedObject(AbstractTransform):
 
         # vertices uniforms
     #if self.dirty:
+        trfm = matrix44.create_identity()
         trans = matrix44.create_from_translation(self.pos)
         rot = matrix44.create_from_y_rotation(self._angle)
         #rot = matrix44.create_from_quaternion(self._rotq) #inverse_of_quaternion(self._rotq)
         scale = matrix44.create_from_scale(self.scale)
+        self.shader.uniforms.trfm = trfm
         self.shader.uniforms.translation = trans
         self.shader.uniforms.rotation = rot
         self.shader.uniforms.scale = scale
@@ -173,6 +288,7 @@ class TexturedObject(AbstractTransform):
         self.shader.uniforms.view = view
 
         # textures
+        self.shader.uniforms.coloring = 0
         self.shader.attributes.textureCoords.enable()
         self.shader.attributes.textureCoords.point_to(self.verts.tex_coords, GL_FLOAT, 2)
 
@@ -188,8 +304,8 @@ class TexturedObject(AbstractTransform):
 
 
 class Poly2D(AbstractTransform):
-    def __init__(self, shader, vertices, type=GL_TRIANGLES):
-        super().__init__()
+    def __init__(self, shader, vertices, type=GL_TRIANGLES, parent=None):
+        super().__init__(parent=parent)
         self.time = 0.0
         self.shader = shader
         self.dirty = True
@@ -207,7 +323,7 @@ class Poly2D(AbstractTransform):
                 self._color.append(triangular(0.0, 1.0))
             self._color.append(triangular(0.7, 1.0))
 
-        self.verts = batch2d.add(num_verts, type, self, ('v2f', vertices), ('c4f', self._color))
+        self.verts = main_batch.add(num_verts, type, self, ('v2f', vertices), ('c4f', self._color))
 
     @property
     def color(self):
@@ -268,6 +384,7 @@ class Poly2D(AbstractTransform):
 
 
         #texture uniform
+        self.shader.uniforms.coloring = 1
         self.shader.uniforms.time = self.time
 
         glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, self.verts.colors)
@@ -297,6 +414,9 @@ class MoveProcessor(esper.Processor):
             poly.time += dt
 
 
+
+
+
 class WindowProcessor(pyglet.window.Window, esper.Processor):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -321,7 +441,6 @@ class WindowProcessor(pyglet.window.Window, esper.Processor):
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
         # Modern OpenGL 2D drawning
-        batch2d.draw()
         pyshaders.ShaderProgram.clear()  # or simply glUseProgram(0)
 
         print(1/(time.time() - ts))
@@ -382,11 +501,13 @@ def run(args=None):
     world.add_processor(MoveProcessor())
 
     # FACTORY
-    ps = pyshaders.from_files_names("shaders/vert2d.glsl", "shaders/space.glsl")
-    ps.use()
-    ps.uniforms.proj = projection
-    ps.uniforms.view = view
-    p = Poly2D(ps, tri)
+    c_shader = pyshaders.from_files_names("shaders/vert3d.glsl", "shaders/frag3d.glsl")
+    sgrp = ShaderGrp(c_shader)
+    c_shader.use()
+    c_shader.uniforms.proj = projection
+    c_shader.uniforms.view = view
+
+    p = Poly2D(c_shader, tri)
     # p.pos = [10.0, 0.0]
     p.angle = 1.0
     p.scale = [1.0, 2.0]
@@ -395,10 +516,7 @@ def run(args=None):
                0.0, 0.0, 1.0, 1.0]
     world.create_entity(p)
 
-    c_shader = pyshaders.from_files_names("shaders/vert3d.glsl", "shaders/frag3d.glsl")
-    c_shader.use()
-    c_shader.uniforms.proj = projection
-    c_shader.uniforms.view = view
+
     xmas = TexturedObject.from_file(c_shader, "models/cube.obj", 'models/cube.jpg')
     xmas.pos = [10.0, 10.0, 0.0]
     world.create_entity(xmas)

@@ -46,7 +46,7 @@ int get(vec2 offset) {
 
 void main()
 {
-    if (coloring) {
+    if (coloring == 1) {
     	//get coords and direction
         vec2 uv=gl_FragCoord.xy/vec2(800.0,600.0)-.001;
         uv.y*=600.0/800.0;
@@ -84,8 +84,8 @@ void main()
         vec4 clr = texture(sampTexture, textures.xy);
         if (colorize == 0) {
             outColor = clr;
-        } else { // if (colorize == 1)
-            outColor = clr + clr_clr;
+        } else {
+            outColor = vec4(vec3(clr.rgb + color.rgb), clr.a*color.a);
         }
     }
 }

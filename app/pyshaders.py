@@ -66,7 +66,7 @@ if NO_EXTENSIONS:
     try:
         from . import pyshaders_extensions
         NO_EXTENSIONS = False
-    except SystemError:
+    except:
         NO_EXTENSIONS = True
 
 null_c_int = None

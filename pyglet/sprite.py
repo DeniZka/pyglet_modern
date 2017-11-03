@@ -175,8 +175,8 @@ class Sprite(event.EventDispatcher):
     _batch = None
     _animation = None
     _rotation = 0
-    _opacity = 255
-    _rgb = (255, 255, 255)
+    _opacity = 1.0
+    _rgb = (1.0, 1.0, 1.0)
     _scale = 1.0
     _visible = True
     _vertex_list = None
@@ -381,11 +381,11 @@ class Sprite(event.EventDispatcher):
         if self._batch is None:
             self._vertex_list = graphics.vertex_list(4,
                 vertex_format, 
-                'c4B', ('t3f', self._texture.tex_coords))
+                'c4f', ('t3f', self._texture.tex_coords))
         else:
             self._vertex_list = self._batch.add(4, GL_QUADS, self._group,
                 vertex_format, 
-                'c4B', ('t3f', self._texture.tex_coords))
+                'c4f', ('t3f', self._texture.tex_coords))
         self._update_position()
         self._update_color()
 

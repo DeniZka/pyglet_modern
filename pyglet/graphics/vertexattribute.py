@@ -382,11 +382,15 @@ class ColorAttribute(AbstractAttribute):
         super(ColorAttribute, self).__init__(count, gl_type)
 
     def enable(self):
-        glEnableClientState(GL_COLOR_ARRAY)
+        #glEnableClientState(GL_COLOR_ARRAY)
+        glEnableVertexAttribArray(2)
     
     def set_pointer(self, pointer):
-        glColorPointer(self.count, self.gl_type, self.stride,
-                       self.offset + pointer)
+        #glColorPointer(self.count, self.gl_type, self.stride,
+        #               self.offset + pointer)
+        glVertexAttribPointer(2, self.count, self.gl_type,
+                                GL_FALSE, self.stride,
+                                self.offset + pointer)
 
 class EdgeFlagAttribute(AbstractAttribute):
     '''Edge flag attribute.'''
@@ -464,11 +468,15 @@ class TexCoordAttribute(AbstractAttribute):
         super(TexCoordAttribute, self).__init__(count, gl_type)
 
     def enable(self):
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY)
+        #glEnableClientState(GL_TEXTURE_COORD_ARRAY)
+        glEnableVertexAttribArray(1)
     
     def set_pointer(self, pointer):
-        glTexCoordPointer(self.count, self.gl_type, self.stride,
-                       self.offset + pointer)
+        #glTexCoordPointer(self.count, self.gl_type, self.stride,
+        #               self.offset + pointer)
+        glVertexAttribPointer(1, self.count, self.gl_type,
+                              GL_FALSE, self.stride,
+                              self.offset + pointer)
 
     def convert_to_multi_tex_coord_attribute(self):
         '''Changes the class of the attribute to `MultiTexCoordAttribute`.
@@ -506,11 +514,12 @@ class VertexAttribute(AbstractAttribute):
         super(VertexAttribute, self).__init__(count, gl_type)
 
     def enable(self):
-        glEnableClientState(GL_VERTEX_ARRAY)
+        glEnableVertexAttribArray(0)
 
     def set_pointer(self, pointer):
-        glVertexPointer(self.count, self.gl_type, self.stride,
-                        self.offset + pointer)
+        glVertexAttribPointer(0, self.count, self.gl_type,
+                              GL_FALSE, self.stride,
+                              self.offset + pointer)
 
 class GenericAttribute(AbstractAttribute):
     '''Generic vertex attribute, used by shader programs.'''

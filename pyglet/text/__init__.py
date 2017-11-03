@@ -377,7 +377,7 @@ class Label(DocumentLabel):
     '''
     def __init__(self, text='', 
                  font_name=None, font_size=None, bold=False, italic=False,
-                 color=(255, 255, 255, 255),
+                 color=(1.0, 1.0, 1.0, 1.0),
                  x=0, y=0, width=None, height=None, 
                  anchor_x='left', anchor_y='baseline',
                  align='left',

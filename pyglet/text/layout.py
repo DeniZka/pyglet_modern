@@ -351,13 +351,13 @@ class _GlyphBox(_AbstractBox):
         colors = []
         for start, end, color in context.colors_iter.ranges(i, i+n_glyphs):
             if color is None:
-                color = (0, 0, 0, 255)
+                color = (0.0, 0.0, 0.0, 1.0)
             colors.extend(color * ((end - start) * 4))
 
         vertex_list = layout.batch.add(n_glyphs * 4, GL_QUADS, group,
             ('v2f/dynamic', vertices),
-            ('1g3f/dynamic', tex_coords),
-            ('c4B/dynamic', colors))
+            ('t3f/dynamic', tex_coords),
+            ('c4f/dynamic', colors))
         context.add_list(vertex_list)
 
         # Decoration (background color and underline)
@@ -397,7 +397,7 @@ class _GlyphBox(_AbstractBox):
                 len(background_vertices) // 2, GL_QUADS,
                 layout.background_group,
                 ('v2f/dynamic', background_vertices),
-                ('c4B/dynamic', background_colors))
+                ('c4f/dynamic', background_colors))
             context.add_list(background_list)
 
         if underline_vertices:
@@ -405,7 +405,7 @@ class _GlyphBox(_AbstractBox):
                 len(underline_vertices) // 2, GL_LINES,
                 layout.foreground_decoration_group,
                 ('v2f/dynamic', underline_vertices),
-                ('c4B/dynamic', underline_colors))
+                ('c4f/dynamic', underline_colors))
             context.add_list(underline_list)
 
     def delete(self, layout):
@@ -1739,8 +1739,8 @@ class IncrementalTextLayout(ScrollableTextLayout, event.EventDispatcher):
     '''
     _selection_start = 0
     _selection_end = 0
-    _selection_color = [255, 255, 255, 255]
-    _selection_background_color = [46, 106, 197, 255]
+    _selection_color = [1.0, 1.0, 1.0, 1.0]
+    _selection_background_color = [0.18, 0.41, 0.77, 1.0]
 
     def __init__(self, document, width, height, multiline=False, dpi=None,
                  batch=None, group=None, wrap_lines=True):

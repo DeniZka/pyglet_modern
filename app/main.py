@@ -164,7 +164,7 @@ class ColorizeFontGrp(pyglet.graphics.OrderedGroup):
 
     def set_state(self):
         self.shader.uniforms.colorize = 1
-        self.shader.uniforms.clr_clr = self.color
+        #self.shader.uniforms.clr_clr = self.color
         self.shader.uniforms.trfm = matrix44.create_identity()  #Clean transform matrix before draw lables TODO move somewhere
 
     def unset_state(self):
@@ -317,7 +317,7 @@ class TexturedObject(AbstractTransform):
 
         num_verts = len(mesh.model_vertices) // 3
         self.verts = main_batch.add(num_verts, GL_TRIANGLES, self, ('v3f/static', mesh.model_vertices),
-                                                                   ('1g3f/static', mesh.model_textures))
+                                                                   ('t3f/static', mesh.model_textures))
 
     @classmethod
     def from_file(cls, shader, model_fn, tex_fn, parent=None):
@@ -353,7 +353,7 @@ class Poly2D(AbstractTransform):
 
         self.verts = main_batch.add(num_verts, type, self,
                                     ('v2f/static', vertices),
-                                    ('2g4f/static', self._color))
+                                    ('c4f/static', self._color))
 
     def set_state(self):
         super().set_state()
@@ -449,7 +449,7 @@ def run(args=None):
     std.pos = [10.0, 0.0, 0.0]
     world.create_entity(std)
 
-    for i in range(200):
+    for i in range(20):
         cb = TexturedObject(c_shader, std.mesh, std.texture, depth_grp)
         cb.pos = [randint(-10, 10), randint(-10, 10), randint(-10, 10)]
         world.create_entity(cb)
@@ -468,7 +468,7 @@ def run(args=None):
 
     global label
     label = pyglet.text.Label('Hello, world', batch=main_batch, group=label_grp,
-                              font_size=36,
+                              font_size=36, color=(1.0, 0.0, 0.0, 0.5),
                               x=10, y=100)
     # END FACTORY
 

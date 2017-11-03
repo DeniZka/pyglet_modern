@@ -102,7 +102,7 @@ class Caret(object):
     #: to 12pt at 96dpi.
     SCROLL_INCREMENT= 12 * 96 // 72
 
-    def __init__(self, layout, batch=None, color=(0, 0, 0)):
+    def __init__(self, layout, batch=None, color=(0.0, 0.0, 0.0)):
         '''Create a caret for a layout.
 
         By default the layout's batch is used, so the caret does not need to
@@ -122,9 +122,9 @@ class Caret(object):
         if batch is None:
             batch = layout.batch
         r, g, b = color
-        colors = (r, g, b, 255, r, g, b, 255)
+        colors = (r, g, b, 1.0, r, g, b, 1.0)
         self._list = batch.add(2, gl.GL_LINES, layout.background_group, 
-            'v2f', ('c4B', colors))
+            'v2f', ('c4f', colors))
 
         self._ideal_x = None
         self._ideal_line = None
@@ -146,7 +146,7 @@ class Caret(object):
         if self.PERIOD:
             self._blink_visible = not self._blink_visible
         if self._visible and self._active and self._blink_visible:
-            alpha = 255
+            alpha = 1.0
         else:
             alpha = 0
         self._list.colors[3] = alpha

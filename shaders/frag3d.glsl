@@ -1,6 +1,6 @@
 #version 330
 in vec4 color;
-in vec2 textures;
+in vec3 textures;
 
 uniform sampler2D sampTexture;
 uniform int coloring = 0;
@@ -74,8 +74,7 @@ void main()
         v=mix(vec3(length(v)),v,saturation); //color adjust
         outColor = vec4(v*.006,1000.);
         //outColor = vec4(color.r * sin(time), color.gba);
-        outColor = texture(sampTexture, textures.xy);
-        //outColor = color;
+        outColor = color;
     } else {
         outColor = texture(sampTexture, textures.xy);
     }

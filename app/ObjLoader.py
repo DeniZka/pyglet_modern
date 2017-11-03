@@ -23,7 +23,7 @@ class ObjLoader:
             if values[0] == 'v':
                 self.vert_coords.append(values[1:4])
             if values[0] == 'vt':
-                self.text_coords.append(values[1:3])
+                self.text_coords.append(values[1:3]+[0.0])  # additional uv + w
             if values[0] == 'vn':
                 self.norm_coords.append(values[1:4])
 

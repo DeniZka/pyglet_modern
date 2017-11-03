@@ -34,6 +34,7 @@ tri = [
 active_shader_pid = 0
 
 active_shader = None
+label = None
 
 
 class CameraGrp(pyglet.graphics.Group):
@@ -226,7 +227,7 @@ class TexturedObject(AbstractTransform):
         #mesh.load_model(model_fn)
         num_verts = len(mesh.model_vertices) // 3
         self.verts = main_batch.add(num_verts, GL_TRIANGLES, self, ('v3f/static', mesh.model_vertices),
-                                                                   ('1g2f/static', mesh.model_textures))
+                                                                   ('1g3f/static', mesh.model_textures))
 
     @classmethod
     def from_file(cls, shader, model_fn, tex_fn, parent=None):
@@ -297,7 +298,7 @@ class Poly2D(AbstractTransform):
                 self._color.append(triangular(0.0, 1.0))
             self._color.append(triangular(0.7, 1.0))
 
-        self.verts = main_batch.add(num_verts, type, self, ('v2f/static', vertices), ('1g4f/static', self._color))
+        self.verts = main_batch.add(num_verts, type, self, ('v2f/static', vertices), ('2g4f/static', self._color))
 
     @property
     def angle(self):
@@ -342,6 +343,7 @@ class Poly2D(AbstractTransform):
         #self.shader.uniforms.time = self.time
 
     def unset_state(self):
+        self.shader.uniforms.coloring = 0
         self.dirty = False
 
 
@@ -377,9 +379,7 @@ class WindowProcessor(pyglet.window.Window, esper.Processor):
         glClearColor(0.2, 0.2, 0.2, 1.0)
         #self.fps_display = pyglet.clock.ClockDisplay()
 
-        self.label = pyglet.text.Label('Hello, world',
-                              font_size=36,
-                              x=10, y=100)
+
 
     def on_draw(self):
         self.clear()
@@ -396,7 +396,7 @@ class WindowProcessor(pyglet.window.Window, esper.Processor):
         #glMatrixMode(gl.GL_MODELVIEW)
 
         #self.fps_display.draw()
-        self.label.draw()
+        label.draw()
 
     def on_resize(self, width, height):
         glViewport(0, 0, width, height)
@@ -480,6 +480,11 @@ def run(args=None):
     # self.monkey = Monkey(m_shader)
     monkey = TexturedObject.from_file(c_shader, 'models/monkey.obj', 'models/monkey.jpg', texture_grp)
     world.create_entity(monkey)
+
+    global label
+    label = pyglet.text.Label('Hello, world',
+                              font_size=36,
+                              x=10, y=100)
 
     # END FACTORY
 

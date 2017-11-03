@@ -1,9 +1,158 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="cc238861-4314-463c-9ad6-709c22c77068" name="Default" comment="">
+    <list default="true" id="cc238861-4314-463c-9ad6-709c22c77068" name="Default" comment="rework pyglet shader texturing">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/app/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/app/base.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/app/carbon.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/app/cocoa.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/app/win32.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/app/xlib.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/canvas/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/canvas/base.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/canvas/carbon.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/canvas/cocoa.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/canvas/win32.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/canvas/xlib.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/canvas/xlib_vidmoderestore.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/clock.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/com.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/compat.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/event.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/extlibs/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/extlibs/png.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/font/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/font/base.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/font/carbon.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/font/fontconfig.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/font/freetype.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/font/freetype_lib.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/font/quartz.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/font/ttf.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/font/win32.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/font/win32query.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/gl/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/gl/agl.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/gl/base.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/gl/carbon.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/gl/cocoa.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/gl/gl.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/gl/gl_info.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/gl/glext_arb.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/gl/glext_nv.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/gl/glu.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/gl/glu_info.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/gl/glx.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/gl/glx_info.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/gl/glxext_arb.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/gl/glxext_mesa.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/gl/glxext_nv.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/gl/lib.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/gl/lib_agl.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/gl/lib_glx.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/gl/lib_wgl.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/gl/wgl.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/gl/wgl_info.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/gl/wglext_arb.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/gl/wglext_nv.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/gl/win32.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/gl/xlib.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/graphics/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/graphics/allocation.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/graphics/vertexattribute.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/graphics/vertexbuffer.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/graphics/vertexdomain.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/image/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/image/atlas.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/image/codecs/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/image/codecs/bmp.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/image/codecs/dds.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/image/codecs/gdiplus.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/image/codecs/gdkpixbuf2.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/image/codecs/gif.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/image/codecs/pil.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/image/codecs/png.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/image/codecs/quartz.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/image/codecs/quicktime.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/image/codecs/s3tc.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/info.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/input/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/input/base.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/input/carbon_hid.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/input/carbon_tablet.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/input/darwin_hid.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/input/directinput.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/input/evdev.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/input/evdev_constants.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/input/wintab.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/input/x11_xinput.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/input/x11_xinput_tablet.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/lib.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/libs/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/libs/darwin/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/libs/darwin/cocoapy/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/libs/darwin/cocoapy/cocoalibs.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/libs/darwin/cocoapy/cocoatypes.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/libs/darwin/cocoapy/runtime.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/libs/darwin/constants.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/libs/darwin/quartzkey.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/libs/darwin/types.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/libs/win32/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/libs/win32/constants.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/libs/win32/dinput.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/libs/win32/libwintab.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/libs/win32/types.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/libs/win32/winkey.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/libs/x11/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/libs/x11/cursorfont.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/libs/x11/xf86vmode.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/libs/x11/xinerama.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/libs/x11/xinput.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/libs/x11/xlib.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/libs/x11/xsync.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/media/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/media/avbin.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/media/drivers/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/media/drivers/directsound/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/media/drivers/directsound/lib_dsound.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/media/drivers/openal/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/media/drivers/openal/lib_alc.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/media/drivers/openal/lib_openal.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/media/drivers/pulse/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/media/drivers/pulse/lib_pulseaudio.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/media/drivers/silent.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/media/procedural.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/media/riff.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/resource.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/sprite.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/text/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/text/caret.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/text/document.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/text/formats/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/text/formats/attributed.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/text/formats/html.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/text/formats/plaintext.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/text/formats/structured.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/text/layout.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/text/runlist.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/window/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/window/carbon/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/window/cocoa/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/window/cocoa/pyglet_delegate.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/window/cocoa/pyglet_textview.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/window/cocoa/pyglet_view.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/window/cocoa/pyglet_window.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/window/cocoa/systemcursor.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/window/event.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/window/key.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/window/mouse.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/window/win32/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pyglet/window/xlib/__init__.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/ObjLoader.py" afterPath="$PROJECT_DIR$/app/ObjLoader.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/main.py" afterPath="$PROJECT_DIR$/app/main.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/shaders/frag3d.glsl" afterPath="$PROJECT_DIR$/shaders/frag3d.glsl" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/shaders/vert3d.glsl" afterPath="$PROJECT_DIR$/shaders/vert3d.glsl" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -18,8 +167,8 @@
       <file leaf-file-name="main.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2070">
-              <caret line="69" column="8" lean-forward="false" selection-start-line="69" selection-start-column="8" selection-end-line="69" selection-end-column="8" />
+            <state relative-caret-position="-197">
+              <caret line="300" column="89" lean-forward="false" selection-start-line="300" selection-start-column="88" selection-end-line="300" selection-end-column="89" />
               <folding>
                 <element signature="e#0#38#0" expanded="true" />
               </folding>
@@ -27,31 +176,31 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="frag2d.glsl" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/shaders/frag2d.glsl">
+      <file leaf-file-name="ObjLoader.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/ObjLoader.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="105">
-              <caret line="7" column="1" lean-forward="false" selection-start-line="7" selection-start-column="1" selection-end-line="7" selection-end-column="1" />
+            <state relative-caret-position="375">
+              <caret line="25" column="39" lean-forward="false" selection-start-line="25" selection-start-column="33" selection-end-line="25" selection-end-column="39" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
       <file leaf-file-name="__init__.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pyglet/graphics/__init__.py">
+        <entry file="file://$PROJECT_DIR$/pyglet/image/__init__.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2398">
-              <caret line="170" column="21" lean-forward="false" selection-start-line="170" selection-start-column="21" selection-end-line="170" selection-end-column="21" />
+            <state relative-caret-position="-508">
+              <caret line="1676" column="0" lean-forward="true" selection-start-line="1676" selection-start-column="0" selection-end-line="1676" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="vertexdomain.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pyglet/graphics/vertexdomain.py">
+      <file leaf-file-name="resource.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pyglet/resource.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="92">
-              <caret line="619" column="32" lean-forward="true" selection-start-line="619" selection-start-column="32" selection-end-line="619" selection-end-column="32" />
+            <state relative-caret-position="463">
+              <caret line="531" column="0" lean-forward="false" selection-start-line="531" selection-start-column="0" selection-end-line="531" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -60,12 +209,22 @@
       <file leaf-file-name="layout.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/pyglet/text/layout.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="328">
-              <caret line="851" column="0" lean-forward="false" selection-start-line="851" selection-start-column="0" selection-end-line="851" selection-end-column="0" />
+            <state relative-caret-position="319">
+              <caret line="358" column="12" lean-forward="true" selection-start-line="358" selection-start-column="12" selection-end-line="358" selection-end-column="41" />
               <folding>
-                <element signature="e#15420#16331#0" expanded="false" />
-                <element signature="e#18319#21413#0" expanded="false" />
+                <element signature="e#15421#16332#0" expanded="false" />
+                <element signature="e#18320#21414#0" expanded="false" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="vertexdomain.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pyglet/graphics/vertexdomain.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="208">
+              <caret line="300" column="0" lean-forward="false" selection-start-line="300" selection-start-column="0" selection-end-line="300" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -73,18 +232,8 @@
       <file leaf-file-name="vertexattribute.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/pyglet/graphics/vertexattribute.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="262">
-              <caret line="510" column="35" lean-forward="true" selection-start-line="510" selection-start-column="35" selection-end-line="510" selection-end-column="35" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="vertexbuffer.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pyglet/graphics/vertexbuffer.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="191">
-              <caret line="391" column="0" lean-forward="false" selection-start-line="391" selection-start-column="0" selection-end-line="391" selection-end-column="0" />
+            <state relative-caret-position="489">
+              <caret line="523" column="0" lean-forward="false" selection-start-line="523" selection-start-column="0" selection-end-line="523" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -93,28 +242,19 @@
       <file leaf-file-name="vert3d.glsl" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/shaders/vert3d.glsl">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="15">
-              <caret line="1" column="84" lean-forward="false" selection-start-line="1" selection-start-column="84" selection-end-line="1" selection-end-column="84" />
+            <state relative-caret-position="45">
+              <caret line="3" column="39" lean-forward="true" selection-start-line="3" selection-start-column="39" selection-end-line="3" selection-end-column="39" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="pyshaders.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/pyshaders.py">
+      <file leaf-file-name="frag3d.glsl" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/shaders/frag3d.glsl">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="283">
-              <caret line="495" column="39" lean-forward="true" selection-start-line="495" selection-start-column="39" selection-end-line="495" selection-end-column="39" />
-              <folding>
-                <element signature="e#1104#2013#0" expanded="true" />
-                <element signature="e#6424#8098#0" expanded="false" />
-                <element signature="e#9590#9730#0" expanded="false" />
-                <element signature="e#9778#9792#0" expanded="false" />
-                <element signature="e#9825#10136#0" expanded="false" />
-                <element signature="e#10178#10332#0" expanded="false" />
-                <element signature="e#10383#10542#0" expanded="false" />
-                <element signature="e#10595#10759#0" expanded="false" />
-              </folding>
+            <state relative-caret-position="667">
+              <caret line="76" column="0" lean-forward="false" selection-start-line="76" selection-start-column="0" selection-end-line="76" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -123,18 +263,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>_rotq</find>
-      <find>glEnable(</find>
-      <find>glBindTexture</find>
-      <find>class Window</find>
-      <find>ShaderProgram</find>
-      <find>de</find>
-      <find>detach</find>
-      <find>glDeleteShader</find>
-      <find>draw</find>
-      <find>gldraw</find>
-      <find>glDraw</find>
-      <find>starts</find>
       <find>primcount</find>
       <find>def setter</find>
       <find>LabelGrp</find>
@@ -153,6 +281,18 @@
       <find>_attribute_classes</find>
       <find>VertexAttribute</find>
       <find>glDisableVertexAttribArray</find>
+      <find>bindte</find>
+      <find>bindtex</find>
+      <find>tex_coords</find>
+      <find>glTexImage2D</find>
+      <find>create</find>
+      <find>.create</find>
+      <find>glGenTextures</find>
+      <find>bindTex</find>
+      <find>glBindTexture</find>
+      <find>class Texture</find>
+      <find>Texture</find>
+      <find>.add</find>
     </findStrings>
     <replaceStrings>
       <replace>._color</replace>
@@ -180,10 +320,12 @@
         <option value="$PROJECT_DIR$/app/pyshaders.py" />
         <option value="$PROJECT_DIR$/pyglet/graphics/vertexdomain.py" />
         <option value="$PROJECT_DIR$/pyglet/graphics/vertexbuffer.py" />
-        <option value="$PROJECT_DIR$/shaders/frag3d.glsl" />
-        <option value="$PROJECT_DIR$/shaders/vert3d.glsl" />
         <option value="$PROJECT_DIR$/pyglet/graphics/vertexattribute.py" />
+        <option value="$PROJECT_DIR$/app/ObjLoader.py" />
+        <option value="$PROJECT_DIR$/pyglet/text/layout.py" />
+        <option value="$PROJECT_DIR$/shaders/vert3d.glsl" />
         <option value="$PROJECT_DIR$/app/main.py" />
+        <option value="$PROJECT_DIR$/shaders/frag3d.glsl" />
       </list>
     </option>
   </component>
@@ -211,7 +353,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
@@ -228,12 +369,18 @@
             <path>
               <item name="gl" type="b2602c69:ProjectViewProjectNode" />
               <item name="gl" type="462c0819:PsiDirectoryNode" />
+              <item name="pyglet" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="gl" type="b2602c69:ProjectViewProjectNode" />
+              <item name="gl" type="462c0819:PsiDirectoryNode" />
               <item name="shaders" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -361,26 +508,39 @@
       <option name="project" value="LOCAL" />
       <updated>1509619173916</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="ecs progress, hierarchy grouping progress, vertex parts generic mode">
+      <created>1509628798621</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1509628798621</updated>
+    </task>
+    <task id="LOCAL-00006" summary="rework pyglet shader texturing">
+      <created>1509696681314</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1509696681314</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="-1" y="24" width="1922" height="1177" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.12135417" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.12135417" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.18637654" sideWeight="0.5020855" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18602455" sideWeight="0.4979145" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18602455" sideWeight="0.4979145" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39848915" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39848915" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -396,7 +556,9 @@
     <MESSAGE value="ecs system in progress" />
     <MESSAGE value="ecs system in progress, hierarchi grouping in progress" />
     <MESSAGE value="ecs system in progress, hierarchy grouping in progress" />
-    <option name="LAST_COMMIT_MESSAGE" value="ecs system in progress, hierarchy grouping in progress" />
+    <MESSAGE value="ecs progress, hierarchy grouping progress, vertex parts generic mode" />
+    <MESSAGE value="rework pyglet shader texturing" />
+    <option name="LAST_COMMIT_MESSAGE" value="rework pyglet shader texturing" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -423,38 +585,38 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/pyglet/graphics/vertexattribute.py</url>
-          <line>511</line>
-          <option name="timeStamp" value="88" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/pyglet/graphics/vertexattribute.py</url>
           <line>501</line>
           <option name="timeStamp" value="90" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/pyglet/graphics/vertexattribute.py</url>
-          <line>523</line>
-          <option name="timeStamp" value="92" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/pyglet/graphics/vertexattribute.py</url>
-          <line>526</line>
-          <option name="timeStamp" value="93" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/pyglet/graphics/vertexdomain.py</url>
-          <line>620</line>
-          <option name="timeStamp" value="96" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/app/main.py</url>
-          <line>226</line>
-          <option name="timeStamp" value="97" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/pyglet/graphics/vertexdomain.py</url>
           <line>447</line>
           <option name="timeStamp" value="99" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/pyglet/graphics/vertexdomain.py</url>
+          <line>723</line>
+          <option name="timeStamp" value="103" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/app/main.py</url>
+          <line>336</line>
+          <option name="timeStamp" value="106" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/pyglet/text/layout.py</url>
+          <line>358</line>
+          <option name="timeStamp" value="115" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/pyglet/text/layout.py</url>
+          <line>356</line>
+          <option name="timeStamp" value="116" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/app/ObjLoader.py</url>
+          <line>25</line>
+          <option name="timeStamp" value="117" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
@@ -464,25 +626,11 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="102" />
+      <option name="time" value="118" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file:///usr/lib/python3.4/site-packages/pyrr/objects/matrix44.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="900">
-          <caret line="65" column="6" lean-forward="false" selection-start-line="65" selection-start-column="6" selection-end-line="65" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/lib/python3.4/site-packages/pyrr/matrix33.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/log/grind.sh" />
     <entry file="file:///usr/lib/python3.4/site-packages/pyrr/matrix33.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -505,24 +653,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file:///usr/lib/python3.4/site-packages/pyrr/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1065">
-          <caret line="73" column="0" lean-forward="false" selection-start-line="73" selection-start-column="0" selection-end-line="73" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file:///usr/lib/python3.4/site-packages/pyrr/quaternion.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/lib/python3.4/site-packages/pyrr/matrix44.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="202">
-          <caret line="175" column="0" lean-forward="false" selection-start-line="175" selection-start-column="0" selection-end-line="175" selection-end-column="0" />
         </state>
       </provider>
     </entry>
@@ -585,14 +719,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/ObjLoader.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file:///usr/lib/python3.4/site-packages/pyglet/event.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="277">
@@ -625,9 +751,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-615">
           <caret line="40" column="23" lean-forward="false" selection-start-line="40" selection-start-column="8" selection-end-line="40" selection-end-column="23" />
-          <folding>
-            <element signature="e#0#38#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -682,13 +805,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pyglet/resource.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="298">
-          <caret line="527" column="0" lean-forward="false" selection-start-line="527" selection-start-column="0" selection-end-line="527" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/pyglet/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="5820">
@@ -701,9 +817,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="30">
           <caret line="8" column="0" lean-forward="false" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="61" />
-          <folding>
-            <element signature="e#0#12#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -719,7 +832,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1170">
           <caret line="81" column="0" lean-forward="false" selection-start-line="81" selection-start-column="0" selection-end-line="81" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -727,7 +839,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
           <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="11" selection-end-column="2" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -735,23 +846,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="30">
           <caret line="2" column="0" lean-forward="false" selection-start-line="2" selection-start-column="0" selection-end-line="15" selection-end-column="24" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/shaders/frag3d.glsl">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="645">
-          <caret line="43" column="16" lean-forward="true" selection-start-line="43" selection-start-column="16" selection-end-line="43" selection-end-column="16" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -763,39 +857,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pyglet/text/layout.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="328">
-          <caret line="851" column="0" lean-forward="false" selection-start-line="851" selection-start-column="0" selection-end-line="851" selection-end-column="0" />
-          <folding>
-            <element signature="e#15420#16331#0" expanded="false" />
-            <element signature="e#18319#21413#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pyglet/graphics/vertexbuffer.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="191">
-          <caret line="391" column="0" lean-forward="false" selection-start-line="391" selection-start-column="0" selection-end-line="391" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/shaders/vert3d.glsl">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="1" column="84" lean-forward="false" selection-start-line="1" selection-start-column="84" selection-end-line="1" selection-end-column="84" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/pyshaders.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="283">
+        <state relative-caret-position="6240">
           <caret line="495" column="39" lean-forward="true" selection-start-line="495" selection-start-column="39" selection-end-line="495" selection-end-column="39" />
           <folding>
-            <element signature="e#1104#2013#0" expanded="true" />
+            <element signature="e#1104#2013#0" expanded="false" />
             <element signature="e#6424#8098#0" expanded="false" />
             <element signature="e#9590#9730#0" expanded="false" />
             <element signature="e#9778#9792#0" expanded="false" />
@@ -815,34 +882,125 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pyglet/graphics/__init__.py">
+    <entry file="file://$PROJECT_DIR$/pyglet/text/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2398">
-          <caret line="170" column="21" lean-forward="false" selection-start-line="170" selection-start-column="21" selection-end-line="170" selection-end-column="21" />
+        <state relative-caret-position="247">
+          <caret line="432" column="0" lean-forward="false" selection-start-line="432" selection-start-column="0" selection-end-line="432" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pyglet/graphics/vertexattribute.py">
+    <entry file="file://$PROJECT_DIR$/pyglet/graphics/vertexbuffer.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="262">
-          <caret line="510" column="35" lean-forward="true" selection-start-line="510" selection-start-column="35" selection-end-line="510" selection-end-column="35" />
+        <state relative-caret-position="289">
+          <caret line="431" column="14" lean-forward="false" selection-start-line="431" selection-start-column="14" selection-end-line="431" selection-end-column="14" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/lib/python3.4/site-packages/pyrr/utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="697">
+          <caret line="73" column="0" lean-forward="false" selection-start-line="73" selection-start-column="0" selection-end-line="73" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/pyglet/graphics/vertexdomain.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="92">
-          <caret line="619" column="32" lean-forward="true" selection-start-line="619" selection-start-column="32" selection-end-line="619" selection-end-column="32" />
+        <state relative-caret-position="208">
+          <caret line="300" column="0" lean-forward="false" selection-start-line="300" selection-start-column="0" selection-end-line="300" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/lib/python3.4/site-packages/pyrr/matrix44.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="277">
+          <caret line="132" column="0" lean-forward="false" selection-start-line="132" selection-start-column="0" selection-end-line="132" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pyglet/graphics/vertexattribute.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="489">
+          <caret line="523" column="0" lean-forward="false" selection-start-line="523" selection-start-column="0" selection-end-line="523" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pyglet/graphics/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="202">
+          <caret line="553" column="0" lean-forward="false" selection-start-line="553" selection-start-column="0" selection-end-line="553" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pyglet/image/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-508">
+          <caret line="1676" column="0" lean-forward="true" selection-start-line="1676" selection-start-column="0" selection-end-line="1676" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pyglet/resource.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="463">
+          <caret line="531" column="0" lean-forward="false" selection-start-line="531" selection-start-column="0" selection-end-line="531" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pyglet/text/layout.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="319">
+          <caret line="358" column="12" lean-forward="true" selection-start-line="358" selection-start-column="12" selection-end-line="358" selection-end-column="41" />
+          <folding>
+            <element signature="e#15421#16332#0" expanded="false" />
+            <element signature="e#18320#21414#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shaders/vert3d.glsl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="45">
+          <caret line="3" column="39" lean-forward="true" selection-start-line="3" selection-start-column="39" selection-end-line="3" selection-end-column="39" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/ObjLoader.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="25" column="39" lean-forward="false" selection-start-line="25" selection-start-column="33" selection-end-line="25" selection-end-column="39" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shaders/frag3d.glsl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="667">
+          <caret line="76" column="0" lean-forward="false" selection-start-line="76" selection-start-column="0" selection-end-line="76" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2070">
-          <caret line="69" column="8" lean-forward="false" selection-start-line="69" selection-start-column="8" selection-end-line="69" selection-end-column="8" />
+        <state relative-caret-position="-197">
+          <caret line="300" column="89" lean-forward="false" selection-start-line="300" selection-start-column="88" selection-end-line="300" selection-end-column="89" />
           <folding>
             <element signature="e#0#38#0" expanded="true" />
           </folding>

@@ -14,18 +14,6 @@ main_batch = pyglet.graphics.Batch()
 batch2d = pyglet.graphics.Batch()
 zoom = 50
 
-projection = matrix44.create_orthogonal_projection(
-    -1280 / 2 / zoom, 1280 / 2 / zoom,
-    -720 / 2 / zoom, 720 / 2 / zoom,
-    -100, 100
-)
-view = matrix44.create_look_at(
-    (0.0, 0.0, 1.0),
-    (0.0, 0.0, 0.0),
-    (0.0, 1.0, 0.1)
-)
-projection_dirty = True
-
 tri = [
     1.0*10, 0.0*10,
     0.0*10, 1.0*10,
@@ -47,34 +35,48 @@ class CameraGrp(pyglet.graphics.OrderedGroup):
         self.x, self.y = x, y
         self.width = 1280
         self.height = 720
+        self._zoom = 50.0
         self.shader = shader
-        self.projection = matrix44.create_orthogonal_projection(
-            -1280 / 2 / zoom, 1280 / 2 / zoom,
-            -720 / 2 / zoom, 720 / 2 / zoom,
-            -100, 100
-        )
-        self.view = matrix44.create_look_at(
-            (x, y, 1.0),
-            (x, y, 0.0),
-            (0.0, 1.0, 0.1)
-        )
-        self.default_proj = matrix44.create_orthogonal_projection(
-            0, self.width, 0, 720, -1, 1
-        )
+        self.projection = None
+        self.view = None
+        self.default_proj = None
         self.default_view = matrix44.create_identity()
+        self.calc_projection()
 
     def set_state(self):
-        self.shader.uniforms.proj = projection  # self.projection
-        self.shader.uniforms.view = view  # self.view
+        self.shader.uniforms.proj = self.projection
+        self.shader.uniforms.view = self.view
 
     def unset_state(self):
-        # TODO reset to default view
         self.shader.uniforms.proj = self.default_proj
         self.shader.uniforms.view = self.default_view
 
-    def zoom(self):
-        # TODO zoom and another features
-        pass
+    def calc_projection(self):
+        self.projection = matrix44.create_orthogonal_projection(
+            -self.width / 2 / self._zoom, self.width / 2 / self._zoom,
+            -self.height / 2 / self._zoom, self.height / 2 / self._zoom,
+            -100, 100
+        )
+        self.default_proj = matrix44.create_orthogonal_projection(
+            0, self.width, 0, self.height, -1, 1
+        )
+        #projection = matrix44.create_perspective_projection_matrix(
+        #    45.0, self.width / self.height,0.1,100.0)
+        self.view = matrix44.create_look_at(
+            (self.x, self.y, 1.0),
+            (self.x, self.y, 0.0),
+            (0.0, 1.0, 0.0)
+        )
+        self.dirty = True
+
+    def resize(self, width, height):
+        self.width = width
+        self.height = height
+        self.calc_projection()
+
+    def zoom(self, val):
+        self._zoom += self._zoom * val
+        self.calc_projection()
 
 
 class ShaderGrp(pyglet.graphics.Group):
@@ -99,7 +101,7 @@ class ShaderGrp(pyglet.graphics.Group):
 
     def unset_state(self):
         """
-        return prevous shader
+        return prevous shader if need
         """
         #glUseProgram(self.bak_shader_pid)
         #self.active_shader_pid = self.bak_shader_pid
@@ -162,6 +164,7 @@ class ColorizeFontGrp(pyglet.graphics.OrderedGroup):
     def set_state(self):
         self.shader.uniforms.colorize = 1
         self.shader.uniforms.clr_clr = self.color
+        self.shader.uniforms.trfm = matrix44.create_identity()  #Clean transform matrix before draw lables TODO move somewhere
 
     def unset_state(self):
         self.shader.uniforms.colorize = 0
@@ -258,12 +261,16 @@ class TexturedObject(AbstractTransform):
         self.ta = 0.0 #tempraty angle
         self._rot = Matrix44.identity()
         self._rotq = quaternion.create()
-        self.pos = [0.0, 0.0, 0.0]
+        self._pos = [0.0, 0.0, 0.0]
         self.scale = [1.0, 1.0, 1.0]
         self.shader = shader
         self.attr_pos = self.shader.attributes["position"]
         self.dirty = True
         self._angle = 0.0
+        self._rm = Matrix44.from_z_rotation(self._angle)
+        self._tm = Matrix44.from_translation(self._pos)
+        self._sm = Matrix44.from_scale(self.scale)
+        self._trfm = self._tm * self._rm * self._sm
 
         self.r = 1.0
 
@@ -290,34 +297,33 @@ class TexturedObject(AbstractTransform):
     @angle.setter
     def angle(self, val):
         if type(val) is float:
-            self._rot = Matrix44.from_y_rotation(val)
-            self._rotq = quaternion.create_from_y_rotation(val)
+            self._rot = Matrix44.from_z_rotation(val)
+            self._rotq = quaternion.create_from_z_rotation(val)
         else:
             self._rot = matrix44.create_from_quaternion(val)
             self._rotq = val
         self.dirty = True
 
-    def rotate_local(self, angle, axis='z'):
-        if axis == 'z':
-            q = quaternion.create_from_z_rotation(angle)
-        if axis == 'y':
-            q = quaternion.create_from_y_rotation(angle)
-        if axis == 'x':
-            q = quaternion.create_from_x_rotation(angle)
-        self._rotq = q * self._rotq
+    @property
+    def pos(self):
+        return self._pos
+
+    @pos.setter
+    def pos(self, val):
+        self._pos = val
+        self._tm = Matrix44.from_translation(val)
+        self.dirty = True
+
+    def rotate_local(self, angle):
+        self._angle += angle
+        self._rm = Matrix44.from_z_rotation(self._angle)
         self.dirty = True
 
     def set_state(self):
         # vertices uniforms
-        trfm = matrix44.create_identity()
-        trans = matrix44.create_from_translation(self.pos)
-        rot = matrix44.create_from_y_rotation(self._angle)
-        #rot = matrix44.create_from_quaternion(self._rotq) #inverse_of_quaternion(self._rotq)
-        scale = matrix44.create_from_scale(self.scale)
-        self.shader.uniforms.trfm = trfm
-        self.shader.uniforms.translation = trans
-        self.shader.uniforms.rotation = rot
-        self.shader.uniforms.scale = scale
+        if self.dirty:
+            self._trfm = self._tm * self._rm * self._sm
+        self.shader.uniforms.trfm = self._trfm
         self.dirty = False
 
         # textures
@@ -380,10 +386,10 @@ class Poly2D(AbstractTransform):
     def set_state(self):
         # vertices uniforms
         rot = matrix44.create_from_y_rotation(0.0)
-        self.shader.uniforms.rotation = rot
+
         #trans = matrix44.create_from_translation(self.pos)
         self._trfm = self._pos * self._rot * self._scale
-        self.shader.uniforms.translation = self._pos
+        self.shader.uniforms.trfm = self._trfm
 
         #texture uniform
         self.shader.uniforms.coloring = 1
@@ -404,7 +410,7 @@ class MoveProcessor(esper.Processor):
         for e, to in self.world.get_component(TexturedObject):
             # self.ta += 0.1 * dt
             to.rotate_local(dt)
-            to._angle += dt
+            #to._angle += dt
             # self.r += dt
             # self.scale[0] = math.sin(self.r) + 2
             to.dirty = True
@@ -426,47 +432,22 @@ class WindowProcessor(pyglet.window.Window, esper.Processor):
         glClearColor(0.2, 0.2, 0.2, 1.0)
         self.fps_display = pyglet.clock.ClockDisplay()
 
-
-
     def on_draw(self):
         self.clear()
         main_batch.draw()
-
         self.fps_display.draw()
-
 
     def on_resize(self, width, height):
         glViewport(0, 0, width, height)
-        self.calc_projection()
+        for e, cam in self.world.get_component(CameraGrp):
+            cam.resize(width, height)
 
     def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
-        global zoom
-        if scroll_y > 0:
-            zoom += zoom * 0.1
-        if scroll_y < 0:
-            zoom -= zoom * 0.1
-        self.calc_projection()
-
-    # self methods
-    def calc_projection(self):
-        global projection, view, projection_dirty
-        projection = matrix44.create_orthogonal_projection(
-            -self.width / 2 / zoom, self.width / 2 / zoom,
-            -self.height / 2 / zoom, self.height / 2 / zoom,
-            -100, 100
-        )
-        #projection = matrix44.create_perspective_projection_matrix(
-        #    45.0,
-        #    self.width / self.height,
-        #    0.1,
-        #    100.0
-        #)
-        view = matrix44.create_look_at(
-            (0.0, 0.0, 1.0),
-            (0.0, 0.0, 0.0),
-            (0.0, 1.0, 0.0)
-        )
-        projection_dirty = True
+        for e, cam in self.world.get_component(CameraGrp):
+            if scroll_y > 0:
+                cam.zoom(0.1)
+            if scroll_y < 0:
+                cam.zoom(-0.1)
 
     def process(self, dt):
         pass
@@ -483,6 +464,7 @@ def run(args=None):
     shader_grp = ShaderGrp(c_shader)
 
     camera_grp = CameraGrp(0, c_shader, shader_grp)
+    world.create_entity(camera_grp)
     depth_grp = DepthTestGrp(0, camera_grp)
     texture_grp = EnableTextureGrp(depth_grp)
     blend_grp = BlendGrp(1, camera_grp)

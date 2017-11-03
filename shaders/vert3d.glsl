@@ -6,25 +6,7 @@ layout(location = 2) in vec4 vertColor;
 uniform int coloring = 0;
 uniform mat4 proj;
 uniform mat4 view;
-uniform mat4 rotation = mat4(
-    1.0, 0.0, 0.0, 0.0,
-    0.0, 1.0, 0.0, 0.0,
-    0.0, 0.0, 1.0, 0.0,
-    0.0, 0.0, 0.0, 1.0
-);
-uniform mat4 translation = mat4(
-    1.0, 0.0, 0.0, 0.0,
-    0.0, 1.0, 0.0, 0.0,
-    0.0, 0.0, 1.0, 0.0,
-    0.0, 0.0, 0.0, 1.0
-);
-uniform mat4 scale = mat4(
-    1.0, 0.0, 0.0, 0.0,
-    0.0, 1.0, 0.0, 0.0,
-    0.0, 0.0, 1.0, 0.0,
-    0.0, 0.0, 0.0, 1.0
-);
-//self transform
+
 uniform mat4 trfm = mat4 (
     1.0, 0.0, 0.0, 0.0,
     0.0, 1.0, 0.0, 0.0,
@@ -38,7 +20,7 @@ out vec4 color;
 
 void main()
 {
-    gl_Position = proj * view * trfm * translation * rotation * scale * vec4(position, 1.0f);
+    gl_Position = proj * view * trfm * vec4(position, 1.0f);
     //if (coloring == 0) {
         textures = textureCoords;
     //} else {

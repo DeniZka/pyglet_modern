@@ -189,23 +189,43 @@ class Graphics(pyglet.graphics.Group):
     """
     Simple painted vertices
     """
-    def __init__(self, vertex_list, color_list, parent=None):
+    def __init__(self, shader, vertex_list, color_list, parent=None):
         super().__init__(parent=parent)
         self.vlist = vertex_list
         self.clist = color_list
+        self.shader = shader
 
     def __del__(self):
         self.vertex_list = None
 
-class GraphicTextured(pyglet.graphics.Group):
+    @classmethod
+    def from_file(cls, shader, model_fn, tex_fn, parent=None):
+        mesh = ObjLoader()
+        mesh.load_model(model_fn)
+        texture = pyglet.image.load(tex_fn).texture
+        num_verts = len(mesh.model_vertices) // 3
+        verts = main_batch.add(num_verts, GL_TRIANGLES, None, ('v3f/static', mesh.model_vertices),
+                                                                   ('t3f/static', mesh.model_textures))
+        return cls(shader, mesh, texture, parent)
+
+    def set_state(self):
+        self.shader.uniforms.coloring = 1
+        #self.shader.uniforms.time = self.time
+
+    def unset_state(self):
+        self.shader.uniforms.coloring = 0
+
+
+class GraphicsTextured(pyglet.graphics.Group):
     """
     Painted with texture vertices
     """
-    def __init__(self, vertex_list, texture, color=(1.0, 1.0, 1.0, 1.0), parent=None):
+    def __init__(self, shader, vertex_list, texture, color=(1.0, 1.0, 1.0, 1.0), parent=None):
         super().__init__(parent=parent)
         self.vlist = vertex_list
         self.color = color
         self.texture = texture
+        self.shader = shader
 
     def __del__(self):
         self.vertex_list = None
@@ -214,18 +234,19 @@ class GraphicTextured(pyglet.graphics.Group):
         glBindTexture(self.texture.target, self.texture.id)
 
 
-class AbstractTransform(pyglet.graphics.Group):
+class TransformGrp(pyglet.graphics.Group):
     """
     Unifrom transfromation access group
     """
-    def __init__(self, transform_matrix=None, parent_transform=None, parent=None):
+    def __init__(self, shader, transform_matrix=None, parent_transform=None, parent=None):
         super().__init__(parent=parent)
+        self.shader = shader
         self._ptr = parent_transform
         self._tr = transform_matrix
         if self._tr is None:
             self._tr = Matrix44.identity()
         self._gtr = self._tr  # global transform include parent transformations
-        if self.parent and self.parent.__class__ is AbstractTransform:
+        if self.parent and self.parent.__class__ is TransformGrp:
             self._gtr = self.parent.transform * self._tr
 
         self._pos = [0.0, 0.0, 0.0]
@@ -307,11 +328,11 @@ class AbstractTransform(pyglet.graphics.Group):
         self.shader.uniforms.trfm = self._trfm
 
 
-class TexturedObject(AbstractTransform):
+class TexturedObject(pyglet.graphics.Group):
     def __init__(self, shader, mesh, texture, parent=None):
         super().__init__(parent=parent)
-        self.time = 0.0 #tempraty time
         self.shader = shader
+        self.time = 0.0  # tempraty time
         self.mesh = mesh
         self.texture = texture
 
@@ -328,41 +349,33 @@ class TexturedObject(AbstractTransform):
         return cls(shader, mesh, texture, parent)
 
     def set_state(self):
-        super().set_state()
-        # textures
-        self.shader.uniforms.coloring = 0
         glBindTexture(self.texture.target, self.texture.id)
 
 
-class Poly2D(AbstractTransform):
-    def __init__(self, shader, vertices, type=GL_TRIANGLES, parent=None):
+class Poly2D(pyglet.graphics.Group):
+    def __init__(self, shader, vertices, type=GL_TRIANGLES, parent=None, clrs=(1.0, 1.0, 1.0, 1.0)):
         super().__init__(parent=parent)
         self.time = 0.0
         self.shader = shader
         self.dirty = True
         self._color = []
 
-        self._trfm = Matrix44.identity()
-        self._scale = Matrix44.identity()
-
         num_verts = int(len(vertices) / 2)
-        for i in range(num_verts):
-            for j in range(3):
-                self._color.append(triangular(0.0, 1.0))
-            self._color.append(triangular(0.7, 1.0))
+        if len(clrs) == 4:
+            self._color = clrs * num_verts
+        else:
+            self._color = clrs
 
         self.verts = main_batch.add(num_verts, type, self,
                                     ('v2f/static', vertices),
                                     ('c4f/static', self._color))
 
     def set_state(self):
-        super().set_state()
         self.shader.uniforms.coloring = 1
         #self.shader.uniforms.time = self.time
 
     def unset_state(self):
         self.shader.uniforms.coloring = 0
-        self.dirty = False
 
 
 class MoveProcessor(esper.Processor):
@@ -372,13 +385,13 @@ class MoveProcessor(esper.Processor):
 
     def process(self, dt):
         self.time += dt
-        for e, to in self.world.get_component(TexturedObject):
+        for e, (t, to) in self.world.get_components(TransformGrp, TexturedObject):
             # self.ta += 0.1 * dt
-            to.rotate(dt)
+            t.rotate(dt)
             #to._angle += dt
             # self.r += dt
             # self.scale[0] = math.sin(self.r) + 2
-            to.dirty = True
+            t.dirty = True
 
         for e, poly in self.world.get_component(Poly2D):
             poly.time += dt
@@ -435,36 +448,36 @@ def run(args=None):
     blend_grp = BlendGrp(1, camera_grp)
     label_grp = ColorizeFontGrp(1, c_shader, parent=shader_grp)
 
-    p = Poly2D(c_shader, tri, parent=blend_grp)
-    p.pos = [10.0, 0.0]
-    p.angle = 1.0
-    p.scale = [1.0, 2.0]
-    world.create_entity(p)
+    t = TransformGrp(c_shader, parent=blend_grp)
+    t.pos = [10.0, 0.0]
+    t.angle = 1.0
+    t.scale = [1.0, 2.0]
+    p = Poly2D(c_shader, tri, parent=t, clrs=(1.0, 0.5, 1.0, 0.5))
+    world.create_entity(p,t)
 
-    xmas = TexturedObject.from_file(c_shader, "models/cube.obj", 'models/cube.jpg', texture_grp)
-    xmas.pos = [10.0, 10.0, 0.0]
-    world.create_entity(xmas)
+    #GraphicsTextured(c_shader, )
+    t = TransformGrp(c_shader, parent=texture_grp)
+    t.pos = [0.0, 0.0, 0.0]
+    xmas = TexturedObject.from_file(c_shader, "models/cube.obj", 'models/cube.jpg', t)
+    world.create_entity(xmas, t)
 
-    std = TexturedObject.from_file(c_shader, "models/xmas_tree.obj", 'models/xmas_texture.jpg', texture_grp)
-    std.pos = [10.0, 0.0, 0.0]
-    world.create_entity(std)
+    t = TransformGrp(c_shader, parent=texture_grp)
+    t.pos = [10.0, 10.0, 0.0]
+    std = TexturedObject.from_file(c_shader, "models/xmas_tree.obj", 'models/xmas_texture.jpg', t)
+    world.create_entity(std, t)
 
     for i in range(20):
-        cb = TexturedObject(c_shader, std.mesh, std.texture, depth_grp)
-        cb.pos = [randint(-10, 10), randint(-10, 10), randint(-10, 10)]
-        world.create_entity(cb)
-        v = (triangular(), triangular(), triangular())
-        # v = (0.0, 1.0, 1.0)
-        a = triangular()  # math.pi/2
-        q = quaternion.create_from_axis_rotation(v, a)
-        # m = matrix44.create_from_quaternion(q)#inverse_of_quaternion(q)
-        # cb.angle = randint(-10, 10) / 10
-        #cb.angle = q
-        cb.angle = randint(-10, 10)
+        t = TransformGrp(c_shader, parent=depth_grp)
+        t.pos = [randint(-10, 10), randint(-10, 10), randint(-10, 10)]
+        t.angle = randint(-10, 10)
+        cb = TexturedObject(c_shader, std.mesh, std.texture, t)
+        world.create_entity(cb, t)
 
     # self.monkey = Monkey(m_shader)
-    monkey = TexturedObject.from_file(c_shader, 'models/monkey.obj', 'models/monkey.jpg', texture_grp)
-    world.create_entity(monkey)
+    t = TransformGrp(c_shader, parent=texture_grp)
+    t.pos = [0.0, 5.0, 0.0]
+    monkey = TexturedObject.from_file(c_shader, 'models/monkey.obj', 'models/monkey.jpg', t)
+    world.create_entity(monkey, t)
 
     global label
     label = pyglet.text.Label('Hello, world', batch=main_batch, group=label_grp,

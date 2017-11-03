@@ -24,12 +24,7 @@ uniform mat4 scale = mat4(
     0.0, 0.0, 1.0, 0.0,
     0.0, 0.0, 0.0, 1.0
 );
-uniform mat4 parent = mat4(
-    1.0, 0.0, 0.0, 0.0,
-    0.0, 1.0, 0.0, 0.0,
-    0.0, 0.0, 1.0, 0.0,
-    0.0, 0.0, 0.0, 1.0
-);
+//self transform
 uniform mat4 trfm = mat4 (
     1.0, 0.0, 0.0, 0.0,
     0.0, 1.0, 0.0, 0.0,
@@ -43,7 +38,7 @@ out vec4 color;
 
 void main()
 {
-    gl_Position = proj * view * parent * trfm * translation * rotation * scale * vec4(position, 1.0f);
+    gl_Position = proj * view * trfm * translation * rotation * scale * vec4(position, 1.0f);
     //if (coloring == 0) {
         textures = textureCoords;
     //} else {

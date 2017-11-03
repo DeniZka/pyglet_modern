@@ -6,6 +6,11 @@ uniform sampler2D sampTexture;
 uniform int coloring = 0;
 uniform float time = 0.0f;
 
+#define color_none 0
+#define color_sum 1
+uniform int colorize = color_none;
+uniform vec4 clr_clr = vec4(0.0, 0.0, 0.0, 0.0);
+
 out vec4 outColor;
 
 
@@ -76,6 +81,11 @@ void main()
         //outColor = vec4(color.r * sin(time), color.gba);
         outColor = color;
     } else {
-        outColor = texture(sampTexture, textures.xy);
+        vec4 clr = texture(sampTexture, textures.xy);
+        if (colorize == 0) {
+            outColor = clr;
+        } else { // if (colorize == 1)
+            outColor = clr + clr_clr;
+        }
     }
 }

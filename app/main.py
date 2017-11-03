@@ -105,6 +105,7 @@ class ShaderGrp(pyglet.graphics.Group):
         """
         #glUseProgram(self.bak_shader_pid)
         #self.active_shader_pid = self.bak_shader_pid
+        pass
 
 
 class ShaderSwitchColoringGrp(pyglet.graphics.Group):
@@ -226,7 +227,15 @@ class AbstractTransform(pyglet.graphics.Group):
         self._gtr = self._tr  # global transform include parent transformations
         if self.parent and self.parent.__class__ is AbstractTransform:
             self._gtr = self.parent.transform * self._tr
-        self.dirty = False  # global transform calculated
+
+        self._pos = [0.0, 0.0, 0.0]
+        self._tm = Matrix44.from_translation(self._pos)
+        self._angle = 0.0
+        self._rm = Matrix44.from_z_rotation(self._angle)
+        self._scale = [1.0, 1.0, 1.0]
+        self._sm = Matrix44.from_scale(self.scale)
+        self._trfm = self._tm * self._rm * self._sm
+        self.dirty = True  # global transform calculated
 
     @property
     def local_transform(self):
@@ -237,71 +246,18 @@ class AbstractTransform(pyglet.graphics.Group):
         """
         :return: Total transform matrix
         """
-        if self.parent:
+        if self._ptr:
             if self.dirty:
                 self._gtr = self._ptr.transform * self._tr
         else:
             if self.dirty:
                 self._gtr = self._tr
+                self.dirty = False
         return self._gtr
 
     @transform.setter
     def transform(self, val):
         self._tr = val
-        self.dirty = True
-
-    def set_state(self):
-        active_shader.uniforms.trfm = self._gtr
-
-
-class TexturedObject(AbstractTransform):
-    def __init__(self, shader, mesh, texture, parent=None):
-        super().__init__(parent=parent)
-        self.time = 0.0 #tempraty time
-        self.ta = 0.0 #tempraty angle
-        self._rot = Matrix44.identity()
-        self._rotq = quaternion.create()
-        self._pos = [0.0, 0.0, 0.0]
-        self.scale = [1.0, 1.0, 1.0]
-        self.shader = shader
-        self.attr_pos = self.shader.attributes["position"]
-        self.dirty = True
-        self._angle = 0.0
-        self._rm = Matrix44.from_z_rotation(self._angle)
-        self._tm = Matrix44.from_translation(self._pos)
-        self._sm = Matrix44.from_scale(self.scale)
-        self._trfm = self._tm * self._rm * self._sm
-
-        self.r = 1.0
-
-        self.mesh = mesh
-        self.texture = texture
-
-        #mesh = ObjLoader()
-        #mesh.load_model(model_fn)
-        num_verts = len(mesh.model_vertices) // 3
-        self.verts = main_batch.add(num_verts, GL_TRIANGLES, self, ('v3f/static', mesh.model_vertices),
-                                                                   ('1g3f/static', mesh.model_textures))
-
-    @classmethod
-    def from_file(cls, shader, model_fn, tex_fn, parent=None):
-        mesh = ObjLoader()
-        mesh.load_model(model_fn)
-        texture = pyglet.resource.image(tex_fn, False)
-        return cls(shader, mesh, texture, parent)
-
-    @property
-    def angle(self):
-        return self._rot
-
-    @angle.setter
-    def angle(self, val):
-        if type(val) is float:
-            self._rot = Matrix44.from_z_rotation(val)
-            self._rotq = quaternion.create_from_z_rotation(val)
-        else:
-            self._rot = matrix44.create_from_quaternion(val)
-            self._rotq = val
         self.dirty = True
 
     @property
@@ -310,22 +266,69 @@ class TexturedObject(AbstractTransform):
 
     @pos.setter
     def pos(self, val):
-        self._pos = val
-        self._tm = Matrix44.from_translation(val)
+        if len(val) == 2:
+            self._pos = val+[0.0]
+        else:
+            self._pos = val
+        self._tm = Matrix44.from_translation(self._pos)
         self.dirty = True
 
-    def rotate_local(self, angle):
+    @property
+    def angle(self):
+        return self._angle
+
+    @angle.setter
+    def angle(self, val):
+        self._angle = val
+        self._rm = Matrix44.from_z_rotation(self._angle)
+        self.dirty = True
+
+    def rotate(self, angle):
         self._angle += angle
         self._rm = Matrix44.from_z_rotation(self._angle)
         self.dirty = True
 
+    @property
+    def scale(self):
+        return self._scale
+
+    @scale.setter
+    def scale(self, val):
+        if len(val) == 2:
+            self._scale = val+[1.0]
+        else:
+            self._scale = val
+        self._sm = Matrix44.from_scale(self._scale)
+
     def set_state(self):
-        # vertices uniforms
         if self.dirty:
             self._trfm = self._tm * self._rm * self._sm
+            self.dirty = False
         self.shader.uniforms.trfm = self._trfm
-        self.dirty = False
 
+
+class TexturedObject(AbstractTransform):
+    def __init__(self, shader, mesh, texture, parent=None):
+        super().__init__(parent=parent)
+        self.time = 0.0 #tempraty time
+        self.shader = shader
+        self.mesh = mesh
+        self.texture = texture
+
+        num_verts = len(mesh.model_vertices) // 3
+        self.verts = main_batch.add(num_verts, GL_TRIANGLES, self, ('v3f/static', mesh.model_vertices),
+                                                                   ('1g3f/static', mesh.model_textures))
+
+    @classmethod
+    def from_file(cls, shader, model_fn, tex_fn, parent=None):
+        mesh = ObjLoader()
+        mesh.load_model(model_fn)
+        texture = pyglet.image.load(tex_fn).texture
+        #texture = pyglet.resource.image(tex_fn, False)
+        return cls(shader, mesh, texture, parent)
+
+    def set_state(self):
+        super().set_state()
         # textures
         self.shader.uniforms.coloring = 0
         glBindTexture(self.texture.target, self.texture.id)
@@ -340,10 +343,7 @@ class Poly2D(AbstractTransform):
         self._color = []
 
         self._trfm = Matrix44.identity()
-        self._rot = Matrix44.identity()
         self._scale = Matrix44.identity()
-        self._pos = Matrix44.identity()
-
 
         num_verts = int(len(vertices) / 2)
         for i in range(num_verts):
@@ -351,47 +351,12 @@ class Poly2D(AbstractTransform):
                 self._color.append(triangular(0.0, 1.0))
             self._color.append(triangular(0.7, 1.0))
 
-        self.verts = main_batch.add(num_verts, type, self, ('v2f/static', vertices), ('2g4f/static', self._color))
-
-    @property
-    def angle(self):
-        return self._rot
-
-    @angle.setter
-    def angle(self, val):
-        if type(val) is float:
-            self._rot = Matrix44.from_z_rotation(val)
-        else:
-            self._rot = val
-        self.dirty = True
-
-    @property
-    def pos(self):
-        return self._pos
-
-    @pos.setter
-    def pos(self, val):
-        self._pos = Matrix44.from_translation(val+[0.0])
-        self.dirty = True
-
-    @property
-    def scale(self):
-        return self._scale
-
-    @scale.setter
-    def scale(self, val):
-        self._scale = Matrix44.from_scale(val+[1.0])
-        self.dirty = True
+        self.verts = main_batch.add(num_verts, type, self,
+                                    ('v2f/static', vertices),
+                                    ('2g4f/static', self._color))
 
     def set_state(self):
-        # vertices uniforms
-        rot = matrix44.create_from_y_rotation(0.0)
-
-        #trans = matrix44.create_from_translation(self.pos)
-        self._trfm = self._pos * self._rot * self._scale
-        self.shader.uniforms.trfm = self._trfm
-
-        #texture uniform
+        super().set_state()
         self.shader.uniforms.coloring = 1
         #self.shader.uniforms.time = self.time
 
@@ -409,7 +374,7 @@ class MoveProcessor(esper.Processor):
         self.time += dt
         for e, to in self.world.get_component(TexturedObject):
             # self.ta += 0.1 * dt
-            to.rotate_local(dt)
+            to.rotate(dt)
             #to._angle += dt
             # self.r += dt
             # self.scale[0] = math.sin(self.r) + 2
@@ -484,7 +449,7 @@ def run(args=None):
     std.pos = [10.0, 0.0, 0.0]
     world.create_entity(std)
 
-    for i in range(20):
+    for i in range(200):
         cb = TexturedObject(c_shader, std.mesh, std.texture, depth_grp)
         cb.pos = [randint(-10, 10), randint(-10, 10), randint(-10, 10)]
         world.create_entity(cb)
@@ -494,8 +459,8 @@ def run(args=None):
         q = quaternion.create_from_axis_rotation(v, a)
         # m = matrix44.create_from_quaternion(q)#inverse_of_quaternion(q)
         # cb.angle = randint(-10, 10) / 10
-        cb.angle = q
-        cb._angle = randint(-10, 10)
+        #cb.angle = q
+        cb.angle = randint(-10, 10)
 
     # self.monkey = Monkey(m_shader)
     monkey = TexturedObject.from_file(c_shader, 'models/monkey.obj', 'models/monkey.jpg', texture_grp)
@@ -505,10 +470,7 @@ def run(args=None):
     label = pyglet.text.Label('Hello, world', batch=main_batch, group=label_grp,
                               font_size=36,
                               x=10, y=100)
-
     # END FACTORY
 
-    #window = MyWindow(1280, 720, "My Pyglet Window", resizable=True)
     pyglet.clock.schedule_interval(world.process, 1/60.0)
     pyglet.app.run()
-    return

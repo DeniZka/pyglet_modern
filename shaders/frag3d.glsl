@@ -74,6 +74,8 @@ void main()
         v=mix(vec3(length(v)),v,saturation); //color adjust
         outColor = vec4(v*.006,1000.);
         //outColor = vec4(color.r * sin(time), color.gba);
+        outColor = texture(sampTexture, textures.xy);
+        //outColor = color;
     } else {
         outColor = texture(sampTexture, textures.xy);
     }

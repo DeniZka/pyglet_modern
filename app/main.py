@@ -90,9 +90,10 @@ class ShaderGrp(pyglet.graphics.Group):
         """
         set this shader
         """
-        self.shader.use()
-        self.bak_shader_pid = self.active_shader_pid
-        self.active_shader_pid = self.shader.pid
+        if self.active_shader_pid != self.shader.pid:
+            self.shader.use()
+            self.bak_shader_pid = self.active_shader_pid
+            self.active_shader_pid = self.shader.pid
 
     def unset_state(self):
         """
@@ -203,7 +204,7 @@ class AbstractTransform(pyglet.graphics.Group):
 class TexturedObject(AbstractTransform):
     active_program = 0
 
-    def __init__(self, shader, mesh, image, parent=None):
+    def __init__(self, shader, mesh, texture, parent=None):
         super().__init__(parent=parent)
         self.time = 0.0 #tempraty time
         self.ta = 0.0 #tempraty angle
@@ -219,37 +220,20 @@ class TexturedObject(AbstractTransform):
         self.r = 1.0
 
         self.mesh = mesh
-        self.image = image
+        self.texture = texture
 
         #mesh = ObjLoader()
         #mesh.load_model(model_fn)
         num_verts = len(mesh.model_vertices) // 3
-        self.verts = main_batch.add(num_verts, GL_TRIANGLES, self, ('v3f', mesh.model_vertices),
-                                                                   ('1g2f', mesh.model_textures))
-
-        # region texture settings
-        self.texture = GLuint(0)
-        glGenTextures(1, self.texture)
-        glBindTexture(GL_TEXTURE_2D, self.texture)
-        # set the texture wrapping
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
-        # set the texture filtering
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-
-        #image = pyglet.image.load(tex_fn)
-        image_data = image.get_data('RGB', image.pitch)
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.width, image.height, 0, GL_RGB, GL_UNSIGNED_BYTE, image_data)
-        # endregion
+        self.verts = main_batch.add(num_verts, GL_TRIANGLES, self, ('v3f/static', mesh.model_vertices),
+                                                                   ('1g2f/static', mesh.model_textures))
 
     @classmethod
     def from_file(cls, shader, model_fn, tex_fn, parent=None):
         mesh = ObjLoader()
         mesh.load_model(model_fn)
-        image = pyglet.image.load(tex_fn)
-        #image = pyglet.resource.image(tex_fn, False).image_data TODO:use single texture
-        return cls(shader, mesh, image, parent)
+        texture = pyglet.resource.image(tex_fn, False)
+        return cls(shader, mesh, texture, parent)
 
     @property
     def angle(self):
@@ -276,17 +260,7 @@ class TexturedObject(AbstractTransform):
         self.dirty = True
 
     def set_state(self):
-        #glUseProgram(self.shader.id)
-        global active_shader_pid
-        if self.shader.pid != active_shader_pid:
-            self.shader.use()
-            active_shader_pid = self.shader.pid
-        # vertices
-        #self.shader.attributes.position.enable()
-        #self.shader.attributes.position.point_to(self.verts.vertices, GL_FLOAT, 3)
-
         # vertices uniforms
-    #if self.dirty:
         trfm = matrix44.create_identity()
         trans = matrix44.create_from_translation(self.pos)
         rot = matrix44.create_from_y_rotation(self._angle)
@@ -300,13 +274,7 @@ class TexturedObject(AbstractTransform):
 
         # textures
         self.shader.uniforms.coloring = 0
-        glBindTexture(GL_TEXTURE_2D, self.texture)
-
-    def unset_state(self):
-        #self.shader.attributes.position.disable()
-        #self.shader.attributes.textureCoords.disable()
-        pass
-
+        glBindTexture(self.texture.target, self.texture.id)
 
 
 class Poly2D(AbstractTransform):
@@ -329,7 +297,7 @@ class Poly2D(AbstractTransform):
                 self._color.append(triangular(0.0, 1.0))
             self._color.append(triangular(0.7, 1.0))
 
-        self.verts = main_batch.add(num_verts, type, self, ('v2f', vertices), ('1g4f', self._color))
+        self.verts = main_batch.add(num_verts, type, self, ('v2f/static', vertices), ('1g4f/static', self._color))
 
     @property
     def angle(self):
@@ -361,22 +329,17 @@ class Poly2D(AbstractTransform):
         self._scale = Matrix44.from_scale(val+[1.0])
         self.dirty = True
 
-
     def set_state(self):
-        global active_shader_pid
-        if self.shader.pid != active_shader_pid:
-            self.shader.use()
-            active_shader_pid = self.shader.pid
-
         # vertices uniforms
         rot = matrix44.create_from_y_rotation(0.0)
         self.shader.uniforms.rotation = rot
+        #trans = matrix44.create_from_translation(self.pos)
         self._trfm = self._pos * self._rot * self._scale
-        self.shader.uniforms.trfm = self._trfm
+        self.shader.uniforms.translation = self._pos
 
         #texture uniform
         self.shader.uniforms.coloring = 1
-        self.shader.uniforms.time = self.time
+        #self.shader.uniforms.time = self.time
 
     def unset_state(self):
         self.dirty = False
@@ -401,11 +364,10 @@ class MoveProcessor(esper.Processor):
             poly.time += dt
             if self.time > 3:
                 poly.verts.vertices = [
-    1.0*20, 0.0*20,
-    0.0*20, 1.0*20,
-    -0.0*20, 0.0*20
-]
-
+                1.0*20, 0.0*20,
+                0.0*20, 1.0*20,
+                -0.0*20, 0.0*20
+            ]
 
 
 class WindowProcessor(pyglet.window.Window, esper.Processor):
@@ -413,7 +375,7 @@ class WindowProcessor(pyglet.window.Window, esper.Processor):
         super().__init__(*args, **kwargs)
         self.set_minimum_size(400, 300)
         glClearColor(0.2, 0.2, 0.2, 1.0)
-        self.fps_display = pyglet.clock.ClockDisplay()
+        #self.fps_display = pyglet.clock.ClockDisplay()
 
         self.label = pyglet.text.Label('Hello, world',
                               font_size=36,
@@ -489,7 +451,7 @@ def run(args=None):
     blend_grp = BlendGrp(1, camera_grp)
 
     p = Poly2D(c_shader, tri, parent=blend_grp)
-    # p.pos = [10.0, 0.0]
+    p.pos = [10.0, 0.0]
     p.angle = 1.0
     p.scale = [1.0, 2.0]
     world.create_entity(p)
@@ -503,7 +465,7 @@ def run(args=None):
     world.create_entity(std)
 
     for i in range(20):
-        cb = TexturedObject(c_shader, std.mesh, std.image, depth_grp)
+        cb = TexturedObject(c_shader, std.mesh, std.texture, depth_grp)
         cb.pos = [randint(-10, 10), randint(-10, 10), randint(-10, 10)]
         world.create_entity(cb)
         v = (triangular(), triangular(), triangular())

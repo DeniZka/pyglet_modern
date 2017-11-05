@@ -1,7 +1,7 @@
 from random import randint, triangular
 
 from pyglet.gl import *
-from pyrr import matrix44, Matrix44, quaternion
+from pyrr import matrix44, Matrix44
 
 from app.ObjLoader import ObjLoader
 from app import pyshaders
@@ -9,6 +9,7 @@ from ctypes import c_bool
 
 import esper
 import time
+import math
 
 main_batch = pyglet.graphics.Batch()
 batch2d = pyglet.graphics.Batch()
@@ -41,6 +42,9 @@ class CameraGrp(pyglet.graphics.OrderedGroup):
         self.view = None
         self.default_proj = None
         self.default_view = matrix44.create_identity()
+        self.up_x = 0.0
+        self.up_y = 1.0
+        self._angle = 0.0
         self.calc_projection()
 
     def set_state(self):
@@ -65,9 +69,8 @@ class CameraGrp(pyglet.graphics.OrderedGroup):
         self.view = matrix44.create_look_at(
             (self.x, self.y, 1.0),
             (self.x, self.y, 0.0),
-            (0.0, 1.0, 0.0)
+            (self.up_x, self.up_y, 0.0)
         )
-        self.dirty = True
 
     def resize(self, width, height):
         self.width = width
@@ -77,6 +80,25 @@ class CameraGrp(pyglet.graphics.OrderedGroup):
     def zoom(self, val):
         self._zoom += self._zoom * val
         self.calc_projection()
+
+    def drag(self, dx , dy):
+        zdx = dx / self._zoom
+        zdy = dy / self._zoom
+        #sv.rotate(self._angle)
+        self.x -= zdx
+        self.y -= zdy
+        self.calc_projection()
+
+    @property
+    def angle(self):
+        return self._angle
+
+    @angle.setter
+    def angle(self, val):
+        self._angle = val
+        prex = self.up_x*math.cos(val) - self.up_y*math.sin(val)
+        self.up_y = self.up_x*math.sin(val) - self.up_y*math.cos(val)
+        self.up_x = prex
 
 
 class ShaderGrp(pyglet.graphics.Group):
@@ -136,22 +158,6 @@ class DepthTestGrp(pyglet.graphics.OrderedGroup):
         glDisable(GL_DEPTH_TEST)
 
 
-class BlendGrp(pyglet.graphics.OrderedGroup):
-    """
-    Group for 2D objects
-    Must have lowest order to blend last
-    """
-    def __init__(self, order, parent=None):
-        super().__init__(order, parent=parent)
-
-    def set_state(self):
-        glEnable(GL_BLEND)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-
-    def unset_state(self):
-        glDisable(GL_BLEND)
-
-
 class ColorizeFontGrp(pyglet.graphics.OrderedGroup):
     """
     Group for 2D objects
@@ -163,12 +169,13 @@ class ColorizeFontGrp(pyglet.graphics.OrderedGroup):
         self.color = color
 
     def set_state(self):
-        self.shader.uniforms.colorize = 1
+        #self.shader.uniforms.colorize = 1
         #self.shader.uniforms.clr_clr = self.color
         self.shader.uniforms.trfm = matrix44.create_identity()  #Clean transform matrix before draw lables TODO move somewhere
 
     def unset_state(self):
-        self.shader.uniforms.colorize = 0
+        #self.shader.uniforms.colorize = 0
+        pass
 
 
 class EnableTextureGrp(pyglet.graphics.Group):
@@ -419,6 +426,9 @@ class WindowProcessor(pyglet.window.Window, esper.Processor):
         self.set_minimum_size(400, 300)
         glClearColor(0.2, 0.2, 0.2, 1.0)
         self.fps_display = pyglet.clock.ClockDisplay()
+        self.cam = None
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
     def on_draw(self):
         self.clear()
@@ -427,15 +437,21 @@ class WindowProcessor(pyglet.window.Window, esper.Processor):
 
     def on_resize(self, width, height):
         glViewport(0, 0, width, height)
-        for e, cam in self.world.get_component(CameraGrp):
-            cam.resize(width, height)
+        if self.cam:
+            self.cam.resize(width, height)
 
     def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
-        for e, cam in self.world.get_component(CameraGrp):
+        if self.cam:
             if scroll_y > 0:
-                cam.zoom(0.1)
+                self.cam.zoom(0.1)
             if scroll_y < 0:
-                cam.zoom(-0.1)
+                self.cam.zoom(-0.1)
+
+    def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
+        if (buttons == 1):
+            if self.cam:
+                self.cam.drag(dx, dy)
+        #if (button == 4): TODO Cam rotation
 
     def process(self, dt):
         pass
@@ -453,12 +469,13 @@ def run(args=None):
 
     camera_grp = CameraGrp(0, c_shader, shader_grp)
     world.create_entity(camera_grp)
+    window.cam = camera_grp
+
     depth_grp = DepthTestGrp(0, camera_grp)
     texture_grp = EnableTextureGrp(depth_grp)
-    blend_grp = BlendGrp(1, camera_grp)
     label_grp = ColorizeFontGrp(1, c_shader, parent=shader_grp)
 
-    t = TransformGrp(c_shader, parent=blend_grp)
+    t = TransformGrp(c_shader, parent=camera_grp)
     t.pos = [10.0, 0.0]
     t.angle = 1.0
     t.scale = [1.0, 2.0]
@@ -470,10 +487,11 @@ def run(args=None):
     xmas = TexturedObject.from_file(c_shader, "models/cube.obj", 'models/cube.jpg', ct)
     world.create_entity(xmas, ct)
 
-    t = TransformGrp(c_shader, parent=texture_grp)
-    t.pos = [10.0, 10.0, 0.0]
-    std = TexturedObject.from_file(c_shader, "models/xmas_tree.obj", 'models/xmas_texture.jpg', t)
-    world.create_entity(std, t)
+    tt = TransformGrp(c_shader, parent=texture_grp)
+    tt.pos = [10.0, 10.0, 0.0]
+    tt.parent_trfm = ct
+    std = TexturedObject.from_file(c_shader, "models/xmas_tree.obj", 'models/xmas_texture.jpg', tt)
+    world.create_entity(std, tt)
 
     for i in range(20):
         t = TransformGrp(c_shader, parent=depth_grp)
@@ -484,12 +502,20 @@ def run(args=None):
 
     # self.monkey = Monkey(m_shader)
     t = TransformGrp(c_shader, parent=texture_grp)
-    t.pos = [0.0, 5.0, 0.0]
-    t.parent_trfm = ct
+    t.pos = [0.0, 5.0, -10.0]
+    t.parent_trfm = tt
     monkey = TexturedObject.from_file(c_shader, 'models/monkey.obj', 'models/monkey.jpg', t)
     world.create_entity(monkey, t)
 
     global label
+    tl = TransformGrp(c_shader, parent=monkey)
+    tl.parent_trfm = t
+    tl.scale = [0.2, 0.2]
+    tl.pos = [0.0, 0.0, 1.0]
+    label = pyglet.text.Label('a monkey', batch=main_batch, group=tl,
+                              font_size=10, color=(1.0, 0.0, 0.0, 0.5),
+                              x=0, y=0)
+
     label = pyglet.text.Label('Hello, world', batch=main_batch, group=label_grp,
                               font_size=36, color=(1.0, 0.0, 0.0, 0.5),
                               x=10, y=100)

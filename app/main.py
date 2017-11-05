@@ -258,23 +258,35 @@ class TransformGrp(pyglet.graphics.Group):
         self._trfm = self._tm * self._rm * self._sm
         self.dirty = True  # global transform calculated
 
-    @property
-    def local_transform(self):
-        return self._tr
-
-    @property
-    def transform(self):
+    def get_transform(self, glob=True):
         """
         :return: Total transform matrix
         """
-        if self._ptr:
-            if self.dirty:
-                self._gtr = self._ptr.transform * self._tr
+        if self.dirty:
+            self._trfm = self._tm * self._rm * self._sm
+            if self._ptr:
+                self._gtr = self._ptr.transform * self._trfm
+        if self._ptr and glob:
+            return self._gtr
         else:
-            if self.dirty:
-                self._gtr = self._tr
-                self.dirty = False
-        return self._gtr
+            return self._trfm
+
+    @property
+    def parent_trfm(self):
+        return self._ptr
+
+    @parent_trfm.setter
+    def parent_trfm(self, val):
+        self._ptr = val
+
+    @property
+    def local_transform(self):
+        return self.get_transform(False)
+
+    @property
+    def transform(self):
+        return self.get_transform(True)
+
 
     @transform.setter
     def transform(self, val):
@@ -320,12 +332,10 @@ class TransformGrp(pyglet.graphics.Group):
         else:
             self._scale = val
         self._sm = Matrix44.from_scale(self._scale)
+        self.dirty = True
 
     def set_state(self):
-        if self.dirty:
-            self._trfm = self._tm * self._rm * self._sm
-            self.dirty = False
-        self.shader.uniforms.trfm = self._trfm
+        self.shader.uniforms.trfm = self.transform
 
 
 class TexturedObject(pyglet.graphics.Group):
@@ -386,21 +396,21 @@ class MoveProcessor(esper.Processor):
     def process(self, dt):
         self.time += dt
         for e, (t, to) in self.world.get_components(TransformGrp, TexturedObject):
-            # self.ta += 0.1 * dt
             t.rotate(dt)
-            #to._angle += dt
-            # self.r += dt
-            # self.scale[0] = math.sin(self.r) + 2
-            t.dirty = True
 
-        for e, poly in self.world.get_component(Poly2D):
+        for e, (poly, tr) in self.world.get_components(Poly2D, TransformGrp):
             poly.time += dt
             if self.time > 3:
+                tr.pos = [0.0, 0.0, 0.0]
                 poly.verts.vertices = [
-                1.0*20, 0.0*20,
-                0.0*20, 1.0*20,
-                -0.0*20, 0.0*20
-            ]
+                    1.0*20, 0.0*20,
+                    0.0*20, 1.0*20,
+                    -0.0*20, 0.0*20
+                ]
+                poly.verts.colors = \
+                    [1.0, 1.0, 0.0, 1.0] + \
+                    [0.0, 1.0, 0.0, 0.5] + \
+                    [0.0, 0.0, 1.0, 0.3];
 
 
 class WindowProcessor(pyglet.window.Window, esper.Processor):
@@ -455,11 +465,10 @@ def run(args=None):
     p = Poly2D(c_shader, tri, parent=t, clrs=(1.0, 0.5, 1.0, 0.5))
     world.create_entity(p,t)
 
-    #GraphicsTextured(c_shader, )
-    t = TransformGrp(c_shader, parent=texture_grp)
-    t.pos = [0.0, 0.0, 0.0]
-    xmas = TexturedObject.from_file(c_shader, "models/cube.obj", 'models/cube.jpg', t)
-    world.create_entity(xmas, t)
+    ct = TransformGrp(c_shader, parent=texture_grp)
+    ct.pos = [0.0, 0.0, 0.0]
+    xmas = TexturedObject.from_file(c_shader, "models/cube.obj", 'models/cube.jpg', ct)
+    world.create_entity(xmas, ct)
 
     t = TransformGrp(c_shader, parent=texture_grp)
     t.pos = [10.0, 10.0, 0.0]
@@ -476,6 +485,7 @@ def run(args=None):
     # self.monkey = Monkey(m_shader)
     t = TransformGrp(c_shader, parent=texture_grp)
     t.pos = [0.0, 5.0, 0.0]
+    t.parent_trfm = ct
     monkey = TexturedObject.from_file(c_shader, 'models/monkey.obj', 'models/monkey.jpg', t)
     world.create_entity(monkey, t)
 

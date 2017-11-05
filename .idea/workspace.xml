@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="cc238861-4314-463c-9ad6-709c22c77068" name="Default" comment="moving pyglet to shaders">
+    <list default="true" id="cc238861-4314-463c-9ad6-709c22c77068" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/README.md" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/main.py" afterPath="$PROJECT_DIR$/app/main.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pyglet/font/__init__.py" afterPath="$PROJECT_DIR$/pyglet/font/__init__.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -17,8 +19,8 @@
       <file leaf-file-name="main.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3660">
-              <caret line="474" column="0" lean-forward="true" selection-start-line="474" selection-start-column="0" selection-end-line="474" selection-end-column="0" />
+            <state relative-caret-position="652">
+              <caret line="495" column="0" lean-forward="false" selection-start-line="495" selection-start-column="0" selection-end-line="495" selection-end-column="0" />
               <folding>
                 <element signature="e#490#2169#0" expanded="false" />
                 <element signature="e#2216#2899#0" expanded="false" />
@@ -33,13 +35,97 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="main.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/main.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="75">
+              <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="dispatcher.py" pinned="false" current-in-tab="false">
+        <entry file="file:///usr/lib/python3.6/site-packages/multipledispatch/dispatcher.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="235">
+              <caret line="209" column="0" lean-forward="false" selection-start-line="209" selection-start-column="0" selection-end-line="209" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="README.md" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/README.md">
+          <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
+            <state split_layout="SPLIT">
+              <first_editor relative-caret-position="180">
+                <caret line="12" column="0" lean-forward="false" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
+                <folding />
+              </first_editor>
+              <second_editor>
+                <js_state />
+              </second_editor>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="vertexbuffer.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pyglet/graphics/vertexbuffer.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-345">
+              <caret line="1" column="6" lean-forward="false" selection-start-line="1" selection-start-column="6" selection-end-line="1" selection-end-column="6" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="vertexattribute.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pyglet/graphics/vertexattribute.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="292">
+              <caret line="476" column="29" lean-forward="false" selection-start-line="476" selection-start-column="8" selection-end-line="476" selection-end-column="29" />
+              <folding>
+                <element signature="e#8128#12028#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="__init__.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pyglet/font/__init__.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-2482">
+              <caret line="340" column="9" lean-forward="false" selection-start-line="340" selection-start-column="9" selection-end-line="340" selection-end-column="9" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="vert3d.glsl" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/shaders/vert3d.glsl">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="135">
+              <caret line="9" column="0" lean-forward="false" selection-start-line="9" selection-start-column="0" selection-end-line="11" selection-end-column="68" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="frag3d.glsl" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/shaders/frag3d.glsl">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="135">
+              <caret line="9" column="19" lean-forward="false" selection-start-line="9" selection-start-column="19" selection-end-line="9" selection-end-column="19" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
     </leaf>
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>create</find>
-      <find>.create</find>
-      <find>glGenTextures</find>
       <find>bindTex</find>
       <find>glBindTexture</find>
       <find>Texture</find>
@@ -62,11 +148,14 @@
       <find>512</find>
       <find>type</find>
       <find>clr_c</find>
-      <find>glTran</find>
       <find>Clock</find>
       <find>iden</find>
       <find>Poly2D</find>
       <find>color</find>
+      <find>glTrns</find>
+      <find>glTran</find>
+      <find>_TextZGroup</find>
+      <find>gl</find>
     </findStrings>
     <replaceStrings>
       <replace>._color</replace>
@@ -107,6 +196,8 @@
         <option value="$PROJECT_DIR$/shaders/frag3d.glsl" />
         <option value="$PROJECT_DIR$/pyglet/sprite.py" />
         <option value="$PROJECT_DIR$/shaders/vert3d.glsl" />
+        <option value="$PROJECT_DIR$/pyglet/font/__init__.py" />
+        <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/app/main.py" />
       </list>
     </option>
@@ -142,39 +233,12 @@
               <item name="gl" type="b2602c69:ProjectViewProjectNode" />
               <item name="gl" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="gl" type="b2602c69:ProjectViewProjectNode" />
-              <item name="gl" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="gl" type="b2602c69:ProjectViewProjectNode" />
-              <item name="gl" type="462c0819:PsiDirectoryNode" />
-              <item name="pyglet" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="gl" type="b2602c69:ProjectViewProjectNode" />
-              <item name="gl" type="462c0819:PsiDirectoryNode" />
-              <item name="pyglet" type="462c0819:PsiDirectoryNode" />
-              <item name="graphics" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="gl" type="b2602c69:ProjectViewProjectNode" />
-              <item name="gl" type="462c0819:PsiDirectoryNode" />
-              <item name="pyglet" type="462c0819:PsiDirectoryNode" />
-              <item name="image" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="gl" type="b2602c69:ProjectViewProjectNode" />
-              <item name="gl" type="462c0819:PsiDirectoryNode" />
-              <item name="shaders" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scratches" />
       <pane id="Scope" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -344,14 +408,20 @@
       <option name="project" value="LOCAL" />
       <updated>1509743871997</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="splitted transforms and renderables">
+      <created>1509750690200</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1509750690200</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="-1" y="24" width="1680" height="1024" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.125459" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.12668298" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.18637654" sideWeight="0.5020855" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
@@ -385,7 +455,8 @@
     <MESSAGE value="font coloring" />
     <MESSAGE value="camera group reworked" />
     <MESSAGE value="moving pyglet to shaders" />
-    <option name="LAST_COMMIT_MESSAGE" value="moving pyglet to shaders" />
+    <MESSAGE value="splitted transforms and renderables" />
+    <option name="LAST_COMMIT_MESSAGE" value="splitted transforms and renderables" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -432,8 +503,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/app/main.py</url>
-          <line>476</line>
+          <line>485</line>
           <option name="timeStamp" value="136" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/app/main.py</url>
+          <line>267</line>
+          <option name="timeStamp" value="140" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
@@ -443,13 +519,11 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="139" />
+      <option name="time" value="141" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/c_shader.py" />
-    <entry file="file:///usr/lib64/python3.4/ctypes/__init__.py" />
     <entry file="file:///usr/lib/python3.4/site-packages/pyglet/event.py" />
     <entry file="file:///usr/lib64/python3.4/site-packages/abrt_exception_handler3.py" />
     <entry file="file:///usr/lib/python3.4/site-packages/pyglet/window/xlib/__init__.py" />
@@ -484,13 +558,6 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/shaders/vert2d.glsl" />
     <entry file="file://$PROJECT_DIR$/shaders/frag2d.glsl" />
-    <entry file="file://$PROJECT_DIR$/pyglet/graphics/vertexbuffer.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="431" column="14" lean-forward="false" selection-start-line="431" selection-start-column="14" selection-end-line="431" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/pyglet/image/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-508">
@@ -544,7 +611,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1449">
           <caret line="499" column="63" lean-forward="false" selection-start-line="499" selection-start-column="63" selection-end-line="499" selection-end-column="63" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -552,7 +618,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="215">
           <caret line="217" column="0" lean-forward="false" selection-start-line="217" selection-start-column="0" selection-end-line="217" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -592,7 +657,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="273">
           <caret line="188" column="38" lean-forward="false" selection-start-line="188" selection-start-column="35" selection-end-line="188" selection-end-column="38" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -600,15 +664,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2063">
           <caret line="145" column="28" lean-forward="false" selection-start-line="145" selection-start-column="24" selection-end-line="145" selection-end-column="28" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -624,17 +679,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-2787">
           <caret line="119" column="7" lean-forward="false" selection-start-line="119" selection-start-column="2" selection-end-line="119" selection-end-column="7" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pyglet/graphics/vertexattribute.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3261">
-          <caret line="500" column="11" lean-forward="false" selection-start-line="500" selection-start-column="8" selection-end-line="500" selection-end-column="11" />
-          <folding>
-            <element signature="e#8128#12028#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -650,15 +694,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="216">
           <caret line="552" column="0" lean-forward="false" selection-start-line="552" selection-start-column="0" selection-end-line="552" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pyglet/font/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="366">
-          <caret line="359" column="0" lean-forward="false" selection-start-line="359" selection-start-column="0" selection-end-line="359" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -666,23 +701,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="235">
           <caret line="379" column="4" lean-forward="false" selection-start-line="379" selection-start-column="4" selection-end-line="379" selection-end-column="4" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/shaders/vert3d.glsl">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="20" column="0" lean-forward="true" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/shaders/frag3d.glsl">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="5" column="20" lean-forward="false" selection-start-line="5" selection-start-column="12" selection-end-line="5" selection-end-column="20" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -690,7 +708,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1059">
           <caret line="917" column="0" lean-forward="false" selection-start-line="917" selection-start-column="0" selection-end-line="917" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -705,10 +722,81 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/shaders/frag3d.glsl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="9" column="19" lean-forward="false" selection-start-line="9" selection-start-column="19" selection-end-line="9" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pyglet/graphics/vertexbuffer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-345">
+          <caret line="1" column="6" lean-forward="false" selection-start-line="1" selection-start-column="6" selection-end-line="1" selection-end-column="6" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pyglet/font/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2482">
+          <caret line="340" column="9" lean-forward="false" selection-start-line="340" selection-start-column="9" selection-end-line="340" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pyglet/graphics/vertexattribute.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="292">
+          <caret line="476" column="29" lean-forward="false" selection-start-line="476" selection-start-column="8" selection-end-line="476" selection-end-column="29" />
+          <folding>
+            <element signature="e#8128#12028#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="180">
+            <caret line="12" column="0" lean-forward="false" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
+            <folding />
+          </first_editor>
+          <second_editor>
+            <js_state />
+          </second_editor>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shaders/vert3d.glsl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="9" column="0" lean-forward="false" selection-start-line="9" selection-start-column="0" selection-end-line="11" selection-end-column="68" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/lib/python3.6/site-packages/multipledispatch/dispatcher.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="235">
+          <caret line="209" column="0" lean-forward="false" selection-start-line="209" selection-start-column="0" selection-end-line="209" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3660">
-          <caret line="474" column="0" lean-forward="true" selection-start-line="474" selection-start-column="0" selection-end-line="474" selection-end-column="0" />
+        <state relative-caret-position="652">
+          <caret line="495" column="0" lean-forward="false" selection-start-line="495" selection-start-column="0" selection-end-line="495" selection-end-column="0" />
           <folding>
             <element signature="e#490#2169#0" expanded="false" />
             <element signature="e#2216#2899#0" expanded="false" />

@@ -251,10 +251,12 @@ class _TextZGroup(pyglet.graphics.Group):
     z = 0
 
     def set_state(self):
-        glTranslatef(0, 0, self.z)
+        pass
+        #glTranslatef(0, 0, self.z)
 
     def unset_state(self):
-        glTranslatef(0, 0, -self.z)
+        pass
+        #glTranslatef(0, 0, -self.z)
 
 class Text(object):
     '''Simple displayable text.

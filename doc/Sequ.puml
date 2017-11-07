@@ -1,0 +1,36 @@
+@startuml
+batch -->> Shader : start
+Shader -> Camera : activate shader
+Camera --> DepthTest : set cam uniform
+DepthTest -> Textured : glEnable()
+Textured -> Transform : glEnable()
+Transform -> Graphics : appy transform uni
+Graphics -> Draw : bind_texture
+Draw -> Graphics
+
+Graphics --> TransformSub
+TransformSub --> GraphicsSub
+GraphicsSub --> TransformSub
+TransformSub --> Graphics
+Graphics -> Transform
+
+Transform --> Graphics
+Graphics --> Draw
+Draw --> Graphics
+Graphics --> Transform
+
+Transform -> Textured : glDisable()
+Textured -> DepthTest : glDisable()
+DepthTest --> Camera : default cam uni
+
+Camera -> Transform : set cam uniform
+Transform -> Graphics : apply transform uni
+Graphics -> Draw : bind texture
+Draw -> Graphics
+Graphics -> Transform
+Transform -> Camera : default cam uniform
+
+Camera -> Shader : return shader
+Shader -->> batch : done
+
+@enduml

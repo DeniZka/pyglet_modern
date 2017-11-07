@@ -11,19 +11,11 @@ import esper
 import time
 import math
 
-main_batch = pyglet.graphics.Batch()
-batch2d = pyglet.graphics.Batch()
-zoom = 50
-
 tri = [
     1.0*10, 0.0*10,
     0.0*10, 1.0*10,
     -0.0*10, 0.0*10
 ]
-active_shader_pid = 0
-
-active_shader = None
-label = None
 
 
 class CameraGrp(pyglet.graphics.OrderedGroup):
@@ -156,6 +148,7 @@ class DepthTestGrp(pyglet.graphics.OrderedGroup):
 
     def unset_state(self):
         glDisable(GL_DEPTH_TEST)
+        #pass
 
 
 class ColorizeFontGrp(pyglet.graphics.OrderedGroup):
@@ -189,56 +182,8 @@ class EnableTextureGrp(pyglet.graphics.Group):
         glEnable(GL_TEXTURE_2D)
 
     def unset_state(self):
-        glDisable(GL_TEXTURE_2D)
-
-
-class Graphics(pyglet.graphics.Group):
-    """
-    Simple painted vertices
-    """
-    def __init__(self, shader, vertex_list, color_list, parent=None):
-        super().__init__(parent=parent)
-        self.vlist = vertex_list
-        self.clist = color_list
-        self.shader = shader
-
-    def __del__(self):
-        self.vertex_list = None
-
-    @classmethod
-    def from_file(cls, shader, model_fn, tex_fn, parent=None):
-        mesh = ObjLoader()
-        mesh.load_model(model_fn)
-        texture = pyglet.image.load(tex_fn).texture
-        num_verts = len(mesh.model_vertices) // 3
-        verts = main_batch.add(num_verts, GL_TRIANGLES, None, ('v3f/static', mesh.model_vertices),
-                                                                   ('t3f/static', mesh.model_textures))
-        return cls(shader, mesh, texture, parent)
-
-    def set_state(self):
-        self.shader.uniforms.coloring = 1
-        #self.shader.uniforms.time = self.time
-
-    def unset_state(self):
-        self.shader.uniforms.coloring = 0
-
-
-class GraphicsTextured(pyglet.graphics.Group):
-    """
-    Painted with texture vertices
-    """
-    def __init__(self, shader, vertex_list, texture, color=(1.0, 1.0, 1.0, 1.0), parent=None):
-        super().__init__(parent=parent)
-        self.vlist = vertex_list
-        self.color = color
-        self.texture = texture
-        self.shader = shader
-
-    def __del__(self):
-        self.vertex_list = None
-
-    def set_state(self):
-        glBindTexture(self.texture.target, self.texture.id)
+        #glDisable(GL_TEXTURE_2D)
+        pass
 
 
 class TransformGrp(pyglet.graphics.Group):
@@ -249,13 +194,6 @@ class TransformGrp(pyglet.graphics.Group):
         super().__init__(parent=parent)
         self.shader = shader
         self._ptr = parent_transform
-        self._tr = transform_matrix
-        if self._tr is None:
-            self._tr = Matrix44.identity()
-        self._gtr = self._tr  # global transform include parent transformations
-        if self.parent and self.parent.__class__ is TransformGrp:
-            self._gtr = self.parent.transform * self._tr
-
         self._pos = [0.0, 0.0, 0.0]
         self._tm = Matrix44.from_translation(self._pos)
         self._angle = 0.0
@@ -263,6 +201,9 @@ class TransformGrp(pyglet.graphics.Group):
         self._scale = [1.0, 1.0, 1.0]
         self._sm = Matrix44.from_scale(self.scale)
         self._trfm = self._tm * self._rm * self._sm
+        self._gtr = self._trfm  # global transform include parent transformations
+        if self.parent and self.parent.__class__ is TransformGrp:
+            self._gtr = self.parent.transform * self._trfm
         self.dirty = True  # global transform calculated
 
     def get_transform(self, glob=True):
@@ -271,9 +212,8 @@ class TransformGrp(pyglet.graphics.Group):
         """
         if self.dirty:
             self._trfm = self._tm * self._rm * self._sm
-            if self._ptr:
-                self._gtr = self._ptr.transform * self._trfm
         if self._ptr and glob:
+            self._gtr = self._ptr.transform * self._trfm
             return self._gtr
         else:
             return self._trfm
@@ -297,7 +237,7 @@ class TransformGrp(pyglet.graphics.Group):
 
     @transform.setter
     def transform(self, val):
-        self._tr = val
+        self._trfm = val
         self.dirty = True
 
     @property
@@ -345,7 +285,19 @@ class TransformGrp(pyglet.graphics.Group):
         self.shader.uniforms.trfm = self.transform
 
 
-class TexturedObject(pyglet.graphics.Group):
+class RenderableGroup(pyglet.graphics.Group):
+    batch = pyglet.graphics.Batch()
+
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+        return
+
+    @staticmethod
+    def draw():
+        RenderableGroup.batch.draw()
+
+
+class TexturedObject(RenderableGroup):
     def __init__(self, shader, mesh, texture, parent=None):
         super().__init__(parent=parent)
         self.shader = shader
@@ -354,7 +306,7 @@ class TexturedObject(pyglet.graphics.Group):
         self.texture = texture
 
         num_verts = len(mesh.model_vertices) // 3
-        self.verts = main_batch.add(num_verts, GL_TRIANGLES, self, ('v3f/static', mesh.model_vertices),
+        self.verts = self.batch.add(num_verts, GL_TRIANGLES, self, ('v3f/static', mesh.model_vertices),
                                                                    ('t3f/static', mesh.model_textures))
 
     @classmethod
@@ -369,7 +321,7 @@ class TexturedObject(pyglet.graphics.Group):
         glBindTexture(self.texture.target, self.texture.id)
 
 
-class Poly2D(pyglet.graphics.Group):
+class Poly2D(RenderableGroup):
     def __init__(self, shader, vertices, type=GL_TRIANGLES, parent=None, clrs=(1.0, 1.0, 1.0, 1.0)):
         super().__init__(parent=parent)
         self.time = 0.0
@@ -383,7 +335,7 @@ class Poly2D(pyglet.graphics.Group):
         else:
             self._color = clrs
 
-        self.verts = main_batch.add(num_verts, type, self,
+        self.verts = self.batch.add(num_verts, type, self,
                                     ('v2f/static', vertices),
                                     ('c4f/static', self._color))
 
@@ -432,7 +384,7 @@ class WindowProcessor(pyglet.window.Window, esper.Processor):
 
     def on_draw(self):
         self.clear()
-        main_batch.draw()
+        RenderableGroup.draw()
         self.fps_display.draw()
 
     def on_resize(self, width, height):
@@ -448,7 +400,7 @@ class WindowProcessor(pyglet.window.Window, esper.Processor):
                 self.cam.zoom(-0.1)
 
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
-        if (buttons == 1):
+        if (buttons & 4 == 4):
             if self.cam:
                 self.cam.drag(dx, dy)
         #if (button == 4): TODO Cam rotation
@@ -479,7 +431,7 @@ def run(args=None):
     t.pos = [10.0, 0.0]
     t.angle = 1.0
     t.scale = [1.0, 2.0]
-    p = Poly2D(c_shader, tri, parent=t, clrs=(1.0, 0.5, 1.0, 0.5))
+    p = Poly2D(c_shader, tri, parent=t, clrs=(1.0, 0.5, 1.0, 10.5))
     world.create_entity(p,t)
 
     ct = TransformGrp(c_shader, parent=texture_grp)
@@ -507,16 +459,15 @@ def run(args=None):
     monkey = TexturedObject.from_file(c_shader, 'models/monkey.obj', 'models/monkey.jpg', t)
     world.create_entity(monkey, t)
 
-    global label
+
     tl = TransformGrp(c_shader, parent=monkey)
     tl.parent_trfm = t
     tl.scale = [0.2, 0.2]
     tl.pos = [0.0, 0.0, 1.0]
-    label = pyglet.text.Label('a monkey', batch=main_batch, group=tl,
+    pyglet.text.Label('a monkey', batch=RenderableGroup.batch, group=tl,
                               font_size=10, color=(1.0, 0.0, 0.0, 0.5),
                               x=0, y=0)
-
-    label = pyglet.text.Label('Hello, world', batch=main_batch, group=label_grp,
+    pyglet.text.Label('Hello, world', batch=RenderableGroup.batch, group=label_grp,
                               font_size=36, color=(1.0, 0.0, 0.0, 0.5),
                               x=10, y=100)
     # END FACTORY

@@ -5,7 +5,7 @@
     0.0, 1.0, 0.0, 0.0,   \
     0.0, 0.0, 1.0, 0.0,   \
     0.0, 0.0, 0.0, 1.0    \
-);
+)
 
 layout(location = 0) in vec3 position;      //0 is static for vertixes
 layout(location = 1) in vec3 textureCoords; //1 is static for texture uvw

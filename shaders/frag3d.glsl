@@ -82,10 +82,6 @@ void main()
         outColor = color;
     } else {
         vec4 clr = texture(sampTexture, textures.xy);
-        if (colorize == 0) {
-            outColor = clr;
-        } else {
-            outColor = vec4(vec3(clr.rgb + color.rgb), clr.a*color.a);
-        }
+        outColor = vec4(vec3(clr.rgb + color.rgb), clr.a*color.a);
     }
 }

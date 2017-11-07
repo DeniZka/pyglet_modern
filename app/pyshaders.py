@@ -48,7 +48,7 @@ from pyglet.gl import (GL_VERTEX_SHADER, GL_FRAGMENT_SHADER, GL_COMPILE_STATUS,
   GL_VERTEX_ATTRIB_ARRAY_ENABLED, GL_VERTEX_ATTRIB_ARRAY_STRIDE, 
   GL_VERTEX_ATTRIB_ARRAY_NORMALIZED, GL_VERTEX_ATTRIB_ARRAY_TYPE, GL_FALSE)
 
-from ctypes import c_char, c_uint, cast, POINTER, pointer, byref
+from ctypes import c_char, c_uint, cast, POINTER, pointer, byref, c_float
 import weakref, itertools
 from collections import namedtuple
 from collections.abc import Sequence
@@ -233,8 +233,8 @@ def create_uniform_setter(loc, type, count, is_array):
     elif is_array ^ is_matrix:
         unpack = False if type in UNPACK_ARRAY else True
         def setter_fn(value):
-            flat = value if not unpack else list(itertools.chain.from_iterable(value))
-            #"""
+            flat = value if not unpack else tuple(itertools.chain.from_iterable(value))
+            """
             data = (GLfloat * len(flat))(*flat)
             glUniformMatrix4fv(loc, 1, GL_FALSE, data)
             """

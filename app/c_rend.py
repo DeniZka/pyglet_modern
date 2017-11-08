@@ -31,6 +31,10 @@ class TexturedObject(RenderableGroup):
                                     ('t3f/static', mesh.model_textures)
                                     )
 
+    def __del__(self):
+        for v in self.verts:
+            v = None
+
     @classmethod
     def from_file(cls, shader, model_fn, group=None):
         mesh = ObjLoader()

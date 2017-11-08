@@ -114,5 +114,5 @@ class Factory:
             Factory.wires_coloring = EnableColoringGrp(Factory.shader, Factory.wires_transform)
         g = Primitive2D(Factory.shader, (x1, y1, x2, y2), GL_LINES, Factory.wires_coloring, (0.0, 1.0, 0.0, 1.0))
         w = Wire([x1, y1, x2, y2])
-        Factory.world.create_entity(g, w)
-        return g, w, [(0, 2, 3)]  # like select
+        e = Factory.world.create_entity(g, w)
+        return e, g, w, [(0, 2, 3)]  # like select

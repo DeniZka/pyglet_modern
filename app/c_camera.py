@@ -4,15 +4,19 @@ import math
 
 
 class CameraGrp(pyglet.graphics.OrderedGroup):
+    active_cam = None
     """
     Group that enable camera
     transformation to uniforms
     """
-    def __init__(self, order, shader, parent=None, x=0.0, y=0.0):
+    def __init__(self, order, shader, parent=None, x=0.0, y=0.0, active=True):
         super().__init__(order, parent=parent)
+        if active:
+            CameraGrp.active_cam = self
         self.x, self.y = x, y
         self.width = 1280
         self.height = 720
+        self.hw, self.hh = self.width / 2, self.height / 2
         self._zoom = 50.0
         self.shader = shader
         self.is_ortho = True #ortho
@@ -37,8 +41,8 @@ class CameraGrp(pyglet.graphics.OrderedGroup):
 
     def calc_projection(self):
         self.ortho = matrix44.create_orthogonal_projection(
-            -self.width / 2 / self._zoom, self.width / 2 / self._zoom,
-            -self.height / 2 / self._zoom, self.height / 2 / self._zoom,
+            -self.hw / self._zoom, self.hw / self._zoom,
+            -self.hh / self._zoom, self.hh / self._zoom,
             -100.0, 100.0
         )
         self.persp = matrix44.create_perspective_projection_matrix(
@@ -65,7 +69,7 @@ class CameraGrp(pyglet.graphics.OrderedGroup):
         self._zoom += self._zoom * val
         self.calc_projection()
 
-    def drag(self, dx , dy):
+    def drag(self, dx, dy):
         zdx = dx / self._zoom
         zdy = dy / self._zoom
         #sv.rotate(self._angle)
@@ -87,3 +91,8 @@ class CameraGrp(pyglet.graphics.OrderedGroup):
     def swap_mode(self):
         self.is_ortho = not self.is_ortho
         self.calc_projection()
+
+    def to_world(self, x, y):
+        wx = self.x + (x - self.hw) / self._zoom
+        wy = self.y + (y - self.hh) / self._zoom
+        return wx, wy

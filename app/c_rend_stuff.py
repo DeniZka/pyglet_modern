@@ -94,3 +94,32 @@ class EnableTextureGrp(pyglet.graphics.Group):
     def unset_state(self):
         #glDisable(GL_TEXTURE_2D)
         pass
+
+
+class BindTextureGrp(pyglet.graphics.Group):
+    """
+
+    """
+    def __init__(self, texture, parent=None):
+        super().__init__(parent=parent)
+        self.texture = texture
+
+    @classmethod
+    def from_file(cls, tex_fn, parent=None):
+        texture = pyglet.image.load(tex_fn).texture
+        return cls(texture, parent)
+
+    def set_state(self):
+        glBindTexture(self.texture.target, self.texture.id)
+
+
+class EnableColoringGrp(pyglet.graphics.Group):
+    def __init__(self, shader, parent=None):
+        super().__init__(parent=parent)
+        self.shader = shader
+
+    def set_state(self):
+        self.shader.uniforms.coloring = 1
+
+    def unset_state(self):
+        self.shader.uniforms.coloring = 0

@@ -4,7 +4,8 @@ from pyrr import Matrix44
 
 class TransformGrp(pyglet.graphics.Group):
     """
-    Unifrom transfromation access group
+    Unifrom transformation access group
+    Can be hierarchical with other transformation groups
     """
     def __init__(self, shader, transform_matrix=None, parent_transform=None, parent=None):
         super().__init__(parent=parent)
@@ -16,7 +17,11 @@ class TransformGrp(pyglet.graphics.Group):
         self._rm = Matrix44.from_z_rotation(self._angle)
         self._scale = [1.0, 1.0, 1.0]
         self._sm = Matrix44.from_scale(self.scale)
-        self._trfm = self._tm * self._rm * self._sm
+        if transform_matrix:
+            self._trfm = transform_matrix
+        else:
+            self._trfm = self._tm * self._rm * self._sm
+
         self._gtr = self._trfm  # global transform include parent transformations
         if self.parent and self.parent.__class__ is TransformGrp:
             self._gtr = self.parent.transform * self._trfm
@@ -49,7 +54,6 @@ class TransformGrp(pyglet.graphics.Group):
     @property
     def transform(self):
         return self.get_transform(True)
-
 
     @transform.setter
     def transform(self, val):

@@ -3,7 +3,7 @@ import pyglet
 from pyglet.gl import *
 from pyglet.window import key
 import esper
-from app.c_rend import RenderableGroup
+from app.c_rend import Renderable
 
 
 class Event(list):
@@ -56,11 +56,10 @@ class WindowProcessor(pyglet.window.Window, esper.Processor):
         self.e_m_press = Event()
         self.e_m_release = Event()
 
-
     def on_draw(self):
         self.clear()
         t = time.time()
-        RenderableGroup.draw()
+        Renderable.draw()
         print ((1/(time.time()-t)))
         #self.fps_display.draw()
 

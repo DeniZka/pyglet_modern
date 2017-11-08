@@ -7,7 +7,7 @@ from pyglet.gl import *
 from app.ObjLoader import ObjLoader
 
 
-class RenderableGroup:
+class Renderable:
     batch = pyglet.graphics.Batch()
 
     def __init__(self, group=None):
@@ -15,21 +15,17 @@ class RenderableGroup:
 
     @staticmethod
     def draw():
-        RenderableGroup.batch.draw()
+        Renderable.batch.draw()
 
 
-class TexturedObject(RenderableGroup):
+class TexturedObject(Renderable):
     def __init__(self, shader, mesh, group=None):
         super().__init__(group=group)
         self.shader = shader
         self.time = 0.0  # tempraty time
         self.mesh = mesh
-
-        num_verts = len(mesh.model_vertices) // 3
-        self.verts = self.batch.add(num_verts, GL_TRIANGLES, self.group,
-                                    ('v3f/static', mesh.model_vertices),
-                                    ('t3f/static', mesh.model_textures)
-                                    )
+        self.verts = []
+        self.add_mesh(self.mesh)
 
     def __del__(self):
         for v in self.verts:
@@ -41,8 +37,18 @@ class TexturedObject(RenderableGroup):
         mesh.load_model(model_fn)
         return cls(shader, mesh, group)
 
+    def add_mesh(self, mesh):
+        num_verts = len(mesh.model_vertices) // 3
+        self.verts.append(
+            self.batch.add(
+                num_verts, GL_TRIANGLES, self.group,
+                ('v3f/dynamic', mesh.model_vertices),
+                ('t3f/dynamic', mesh.model_textures)
+            )
+        )
 
-class Primitive2D(RenderableGroup):
+
+class Primitive2D(Renderable):
     def __init__(self, shader, vertices, atype=GL_TRIANGLES, group=None, clrs=(1.0, 1.0, 1.0, 1.0)):
         super().__init__(group=group)
         self.time = 0.0
@@ -52,6 +58,10 @@ class Primitive2D(RenderableGroup):
         self.verts = []
         self.add_lines(vertices, clrs, atype)
 
+    def __del__(self):
+        for v in self.verts:
+            v = None
+
     def add_lines(self, vertices, clrs=(1.0, 1.0, 1.0, 1.0), atype=GL_LINES):
         num_verts = int(len(vertices) / 2)
         if len(clrs) == 4:
@@ -59,7 +69,7 @@ class Primitive2D(RenderableGroup):
         else:
             self._color = clrs
         verts = self.batch.add(num_verts, atype, self.group,
-                       ('v2f/static', vertices),
-                       ('c4f/static', self._color))
+                       ('v2f/dynamic', vertices),
+                       ('c4f/dynamic', self._color))
         self.verts.append(verts)
         return verts

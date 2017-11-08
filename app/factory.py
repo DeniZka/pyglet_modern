@@ -60,6 +60,8 @@ class Factory:
         xmas_bind_grp = BindTextureGrp.from_file('models/xmas_texture.jpg', texture_grp)
         cube_bind_grp = BindTextureGrp.from_file('models/cube.jpg', texture_grp)
         monkey_bind_grp = BindTextureGrp.from_file('models/monkey.jpg', texture_grp)
+        xmas_mesh = ObjLoader()
+        xmas_mesh.load_model("models/xmas_tree.obj")
 
         label_grp = ColorizeFontGrp(1, c_shader, parent=shader_grp)
 
@@ -73,21 +75,21 @@ class Factory:
 
         ct = TransformGrp(c_shader, parent=cube_bind_grp)
         ct.pos = [0.0, 0.0, 0.0]
-        xmas = TexturedObject.from_file(c_shader, "models/cube.obj", ct)
-        Factory.world.create_entity(xmas, ct)
-
-        tt = TransformGrp(c_shader, parent=xmas_bind_grp)
-        tt.pos = [10.0, 10.0, 0.0]
-        tt.parent_trfm = ct
-        std = TexturedObject.from_file(c_shader, "models/xmas_tree.obj", tt)
-        Factory.world.create_entity(std, tt)
+        cube = TexturedObject.from_file(c_shader, "models/cube.obj", ct)
+        Factory.world.create_entity(cube, ct)
 
         for i in range(30):
             t = TransformGrp(c_shader, parent=xmas_bind_grp)
             t.pos = [randint(-10, 10), randint(-10, 10), randint(-10, 10)]
             t.angle = randint(-10, 10)
-            cb = TexturedObject(c_shader, std.mesh, t)
+            cb = TexturedObject(c_shader, xmas_mesh, t)
             Factory.world.create_entity(cb, t)
+
+        tt = TransformGrp(c_shader, parent=xmas_bind_grp)
+        tt.pos = [10.0, 10.0, 0.0]
+        tt.parent_trfm = ct
+        std = TexturedObject(c_shader, xmas_mesh, tt)
+        Factory.world.create_entity(std, tt)
 
         # Factory.monkey = Monkey(m_shader)
         t = TransformGrp(c_shader, parent=monkey_bind_grp)
@@ -100,10 +102,10 @@ class Factory:
         tl.parent_trfm = t
         tl.scale = [0.2, 0.2]
         tl.pos = [0.0, 0.0, 1.0]
-        pyglet.text.Label('a monkey', batch=RenderableGroup.batch, group=tl,
+        pyglet.text.Label('a monkey', batch=Renderable.batch, group=tl,
                           font_size=10, color=(1.0, 0.0, 0.0, 0.5),
                           x=0, y=0)
-        pyglet.text.Label('Hello, world', batch=RenderableGroup.batch, group=label_grp,
+        pyglet.text.Label('Hello, world', batch=Renderable.batch, group=label_grp,
                           font_size=36, color=(1.0, 0.0, 0.0, 0.5),
                           x=10, y=100)
 

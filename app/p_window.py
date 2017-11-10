@@ -77,9 +77,9 @@ class WindowProcessor(pyglet.window.Window, esper.Processor):
     def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
         if self.cam:
             if scroll_y > 0:
-                self.cam.zoom(0.1)
+                self.cam.zoom_in(0.1)
             if scroll_y < 0:
-                self.cam.zoom(-0.1)
+                self.cam.zoom_in(-0.1)
         self.e_m_scroll(x, y, scroll_x, scroll_y)
 
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):

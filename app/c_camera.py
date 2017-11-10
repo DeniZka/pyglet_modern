@@ -63,9 +63,15 @@ class CameraGrp(pyglet.graphics.OrderedGroup):
     def resize(self, width, height):
         self.width = width
         self.height = height
+        self.hw = width / 2
+        self.hh = height / 2
         self.calc_projection()
 
-    def zoom(self, val):
+    @property
+    def zoom(self):
+        return self._zoom
+
+    def zoom_in(self, val):
         self._zoom += self._zoom * val
         self.calc_projection()
 
@@ -95,4 +101,9 @@ class CameraGrp(pyglet.graphics.OrderedGroup):
     def to_world(self, x, y):
         wx = self.x + (x - self.hw) / self._zoom
         wy = self.y + (y - self.hh) / self._zoom
+        return wx, wy
+
+    def to_screen(self, x, y):
+        wx = x - self.x * self._zoom + self.hw
+        wy = y - self.y * self._zoom + self.hh
         return wx, wy

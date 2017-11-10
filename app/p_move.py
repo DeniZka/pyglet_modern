@@ -11,8 +11,8 @@ class MoveProcessor(esper.Processor):
     def process(self, dt):
         self.time += dt
         for e, (t, to) in self.world.get_components(TransformGrp, TexturedObject):
-            if e < 10:
-                t.rotate(dt*1.0)
+            #if e < 10:
+            t.rotate(dt*1.0)
 
         for e, (poly, tr) in self.world.get_components(Primitive2D, TransformGrp):
             poly.time += dt

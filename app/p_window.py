@@ -60,7 +60,7 @@ class WindowProcessor(pyglet.window.Window, esper.Processor):
         self.clear()
         t = time.time()
         Renderable.draw()
-        print ((1/(time.time()-t)))
+        #print ((1/(time.time()-t)))
         #self.fps_display.draw()
 
     def on_resize(self, width, height):

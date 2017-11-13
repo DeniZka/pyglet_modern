@@ -12,6 +12,12 @@ class Renderable:
 
     def __init__(self, group=None):
         self.group = group
+        self.verts = []
+
+    def __del__(self):
+        print("DELETING")
+        for v in self.verts:
+            v = None
 
     @staticmethod
     def draw():
@@ -24,12 +30,7 @@ class TexturedObject(Renderable):
         self.shader = shader
         self.time = 0.0  # tempraty time
         self.mesh = mesh
-        self.verts = []
         self.add_mesh(self.mesh)
-
-    def __del__(self):
-        for v in self.verts:
-            v = None
 
     @classmethod
     def from_file(cls, shader, model_fn, group=None):
@@ -55,12 +56,7 @@ class Primitive2D(Renderable):
         self.shader = shader
         self.dirty = True
         self._color = []
-        self.verts = []
         self.add_lines(vertices, clrs, atype)
-
-    def __del__(self):
-        for v in self.verts:
-            v = None
 
     def add_lines(self, vertices, clrs=(1.0, 1.0, 1.0, 1.0), atype=GL_LINES):
         num_verts = int(len(vertices) / 2)

@@ -7,7 +7,7 @@ from app.factory import Factory
 
 class EditorProcessor(esper.Processor):
 
-    PICK_DIST = 10
+    PICK_DIST = 14
 
     def __init__(self, win_proc):
         super().__init__()
@@ -30,8 +30,10 @@ class EditorProcessor(esper.Processor):
         return self.cam
 
     def _get_wire(self, x, y):
+        dist = EditorProcessor.PICK_DIST / self.cam.zoom
         for e, (p, w) in self.world.get_components(Primitive2D, Wire):
-            sel = w.select(x, y, EditorProcessor.PICK_DIST / self.cam.zoom)
+            #if w.in_bb(x, y, dist):
+            sel = w.select(x, y, dist)
             if len(sel) > 0:
                 self.drag_ent = e
                 self.sel = sel
@@ -47,28 +49,9 @@ class EditorProcessor(esper.Processor):
 
     def _update_sel_wrld(self, x, y):
         for s in self.sel:
-            self.drag_wire.points[s[0]][s[1]] = x
-            self.drag_wire.points[s[0]][s[2]] = y
+            self.drag_wire.update_points(s[0], s[1], x)  # points[s[0]][s[1]] = x
+            self.drag_wire.update_points(s[0], s[2], y)  # points[s[0]][s[2]] = y
             self.drag_line.verts[s[0]].vertices = self.drag_wire.points[s[0]]
-
-    def _nearest_wrld(self, x, y):
-        if not self.contact_list:
-            for e, (p, w) in self.world.get_components(Primitive2D, Wire):
-                for i in range(len(self.sel)):
-                    if e != self.drag_ent:  # exclude selected
-                        self.contact_list.append((e, p, w))
-        min_dist = 100000
-        return
-        # check selected parts with self excluding selected
-        #ssel = self.drag_wire.select(x, y)
-        #for
-        # check others wires
-        #for i in range(len(self.contact_list)):
-           # sel = self.contact_list[i][2].select(x, y)
-
-         #   if
-            #for j in range(len(sel)):
-            #    if sel[j] in self.sel
 
     def on_mouse_press(self, x, y, button, modifiers):
         wx = x
@@ -82,17 +65,35 @@ class EditorProcessor(esper.Processor):
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
         if len(self.sel) > 0:
             wx, wy = self.cam.to_world(x, y)
-            self._update_sel_wrld(wx, wy)
-            self._nearest_wrld(wx, wy)
+            dist = EditorProcessor.PICK_DIST / self.cam.zoom
+            if not self.contact_list:
+                for e, (p, w) in self.world.get_components(Primitive2D, Wire):
+                    if e != self.drag_ent:  # exclude selected
+                        self.contact_list.append(w)
+            sel = []
+            for cl in self.contact_list:
+                sel = cl.select(wx, wy, dist)
+                if sel:
+                    self._update_sel_wrld(cl.points[sel[0][0]][sel[0][1]], cl.points[sel[0][0]][sel[0][2]])
+                    break
+
+            if not sel:
+                sel = self.drag_wire.select(wx, wy, dist, self.sel)
+                if sel:
+                    self._update_sel_wrld(self.drag_wire.points[sel[0][0]][sel[0][1]], self.drag_wire.points[sel[0][0]][sel[0][2]])
+
+            if not sel:
+                self._update_sel_wrld(wx, wy)
 
     def on_mouse_release(self, x, y, button, modifiers):
         if self.drag_ent:
             # drop to
             wx, wy = self.cam.to_world(x, y)
+            dist = EditorProcessor.PICK_DIST / self.cam.zoom
             for e, (p, w) in self.world.get_components(Primitive2D, Wire):
                 if e == self.drag_ent:
                     continue
-                sel = w.select(wx, wy)
+                sel = w.select(wx, wy, dist)
                 if len(sel) > 0:
                     # update
                     self._update_sel_wrld(w.points[sel[0][0]][sel[0][1]], w.points[sel[0][0]][sel[0][2]])
@@ -105,7 +106,7 @@ class EditorProcessor(esper.Processor):
             self.drag_wire = None
             self.drag_line = None
             self.sel = []
-            self.contact_list = []
+        self.contact_list = []
 
     def process(self, dt):
         pass

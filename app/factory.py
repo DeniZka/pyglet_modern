@@ -11,6 +11,7 @@ from app.c_camera import CameraGrp
 from app.c_rend_stuff import *
 from app.c_transform import TransformGrp
 from app.c_wire import Wire
+from app.c_instance import Instance, Pin
 
 tri = [
     1.0*10, 0.0*10,
@@ -28,6 +29,14 @@ lines = [
 
 ]
 
+pin_scale = 0.3
+pin_quad = [
+     0.0 * pin_scale, -1.0 * pin_scale,
+     1.0 * pin_scale,  0.0 * pin_scale,
+     0.0 * pin_scale,  1.0 * pin_scale,
+    -1.0 * pin_scale,  0.0 * pin_scale
+]
+
 
 class Factory:
     world = None
@@ -36,6 +45,8 @@ class Factory:
     cam = None
     wires_transform = None
     wires_coloring = None
+    instance_coloring = None
+    instance_text = None
 
     def __init__(self, world, win_proc):
         Factory.world = world
@@ -85,21 +96,18 @@ class Factory:
             cb = TexturedObject(c_shader, xmas_mesh, t)
             Factory.world.create_entity(cb, t)
 
-        tt = TransformGrp(c_shader, parent=xmas_bind_grp)
+        tt = TransformGrp(c_shader, parent_transform=ct, parent=xmas_bind_grp)
         tt.pos = [10.0, 10.0, 0.0]
-        tt.parent_trfm = ct
         std = TexturedObject(c_shader, xmas_mesh, tt)
         Factory.world.create_entity(std, tt)
 
         # Factory.monkey = Monkey(m_shader)
-        t = TransformGrp(c_shader, parent=monkey_bind_grp)
+        t = TransformGrp(c_shader, parent_transform=tt, parent=monkey_bind_grp)
         t.pos = [0.0, 5.0, -10.0]
-        t.parent_trfm = tt
         monkey = TexturedObject.from_file(c_shader, 'models/monkey.obj', t)
         Factory.world.create_entity(monkey, t)
 
-        tl = TransformGrp(c_shader, parent=t)
-        tl.parent_trfm = t
+        tl = TransformGrp(c_shader, parent_transform=t, parent=t)
         tl.scale = [0.2, 0.2]
         tl.pos = [0.0, 0.0, 1.0]
         pyglet.text.Label('a monkey', batch=Renderable.batch, group=tl,
@@ -118,3 +126,32 @@ class Factory:
         w = Wire([x1, y1, x2, y2])
         e = Factory.world.create_entity(g, w)
         return e, g, w, w._nods[0]  # [(0, 2, 3)]  # like select
+
+    @staticmethod
+    def create_instance(x, y, width, height):
+        if not Factory.instance_coloring:
+            Factory.instance_coloring = EnableColoringGrp(Factory.shader, Factory.cam)
+            Factory.instance_text = ColorizeFontGrp(1, Factory.shader, parent=Factory.cam)
+        # main quad
+        quadv = [0, 0, width, 0, width, height, 0, height]
+        inst = Instance()
+        itr = TransformGrp(Factory.shader, parent=Factory.instance_coloring)
+        itr.pos = [x, y]
+        g = Primitive2D(Factory.shader, quadv, GL_QUADS, itr, (0.4, 0.4, 0.4, 0.2))
+        ie = Factory.world.create_entity(inst, itr, g)
+        # pin
+        p = Pin()
+        tr = TransformGrp(Factory.shader, parent_transform=itr, parent=Factory.instance_coloring)
+        tr.pos = [-0.3, 2.0]
+        #tr.scale = [0.2, 0.2]
+        g = Primitive2D(Factory.shader, pin_quad, GL_QUADS, tr, (0.4, 0.4, 0.8, 0.7))
+        pe = Factory.world.create_entity(p, tr, g)
+        # label
+        tr = TransformGrp(Factory.shader, parent_transform=tr, parent=Factory.instance_text)
+        tr.pos = [0.5, 0.0]
+        tr.scale = [0.1, 0.1]
+        l = pyglet.text.Label('Pin_Name', batch=Renderable.batch, group=tr,
+                          font_size=10, color=(1.0, 0.0, 0.0, 0.5),
+                          x=0, y=0)
+        Factory.world.create_entity(tr, l)
+        return

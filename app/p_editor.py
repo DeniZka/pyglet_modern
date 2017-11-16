@@ -1,3 +1,4 @@
+from pyglet.window import key
 import esper
 from app.c_rend import Primitive2D
 from app.c_wire import Wire
@@ -17,6 +18,7 @@ class EditorProcessor(esper.Processor):
         self.window.e_m_drag.append(self.on_mouse_drag)
         self.window.e_m_press.append(self.on_mouse_press)
         self.window.e_m_release.append(self.on_mouse_release)
+        self.window.e_k_press.append(self.on_key_press)
 
         self.drag_ent = 0
         self.drag_wire = None
@@ -41,6 +43,10 @@ class EditorProcessor(esper.Processor):
                 self.drag_line = p
                 self.drag_wire = w
                 return True
+        return False
+
+    def _get_instance(self, x, y):
+
         return False
 
     def _update_sel_scrn(self, x, y):
@@ -118,7 +124,6 @@ class EditorProcessor(esper.Processor):
                         self._update_sel_wrld(sel.x, sel.y)
                         # drop
                         w.merge(self.drag_wire, self.sel, sel)
-                        #w.points += self.drag_wire.points
                         p.verts += self.drag_line.verts
                         self.world.delete_entity(self.drag_ent)
             #clean
@@ -128,6 +133,12 @@ class EditorProcessor(esper.Processor):
             self.sel = None
         self.contact_list = []
         self.except_list = []
+
+    def on_key_press(self, symbol, modifiers):
+        if symbol == key.I:
+            if self._has_cam():
+                wx, wy = self.cam.to_world(self.window.mx, self.window.my)
+                Factory.create_instance(wx, wy, 10, 20)
 
     def process(self, dt):
         pass

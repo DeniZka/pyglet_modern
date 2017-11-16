@@ -1,7 +1,7 @@
 class Pin:
 
     def __init__(self):
-        wire = None  # wire, identification of one of wire's end
+        wire = None  # attached wire, identification of one of wire's end
         return
 
     def connect_wire(self, wire):
@@ -9,3 +9,8 @@ class Pin:
 
     def disconnect_wire(self):
         return
+
+
+class Instance:
+    pass
+

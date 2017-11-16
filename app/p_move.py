@@ -13,7 +13,7 @@ class MoveProcessor(esper.Processor):
         for e, (t, to) in self.world.get_components(TransformGrp, TexturedObject):
             #if e < 10:
             t.rotate(dt*1.0)
-
+        """
         for e, (poly, tr) in self.world.get_components(Primitive2D, TransformGrp):
             poly.time += dt
             if (3.0 - self.time) < 0.1:
@@ -27,3 +27,4 @@ class MoveProcessor(esper.Processor):
                     [1.0, 1.0, 0.0, 1.0] + \
                     [0.0, 1.0, 0.0, 0.5] + \
                     [0.0, 0.0, 1.0, 0.3]
+        """

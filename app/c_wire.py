@@ -1,8 +1,7 @@
-from app.vec2d import Vec2d
-
-
 class Segment(list):
-
+    """
+    Line part of wore
+    """
     def __init__(self, node1, node2):
         super().__init__()
         self.append(node1)
@@ -28,7 +27,7 @@ class Segment(list):
 
 class Node:
     """
-    Vertex
+    Vertex part of wire
     """
     def __init__(self, x, y):
         self.x = x

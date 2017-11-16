@@ -55,12 +55,16 @@ class WindowProcessor(pyglet.window.Window, esper.Processor):
         self.e_m_drag = Event()
         self.e_m_press = Event()
         self.e_m_release = Event()
+        self.e_k_press = Event()
+
+        self.mx = 0
+        self.my = 0
 
     def on_draw(self):
         self.clear()
         t = time.time()
         Renderable.draw()
-        #print ((1/(time.time()-t)))
+        #print((1/(time.time()-t)))
         #self.fps_display.draw()
 
     def on_resize(self, width, height):
@@ -89,8 +93,13 @@ class WindowProcessor(pyglet.window.Window, esper.Processor):
         self.e_m_drag(x, y, dx, dy, buttons, modifiers)
         #if (button == 4): TODO Cam rotation
 
+    def on_mouse_motion(self, x, y, dx, dy):
+        self.mx = x
+        self.my = y
+
     def on_key_press(self, symbol, modifiers):
         super().on_key_press(symbol, modifiers)
+        self.e_k_press(symbol, modifiers)
         if symbol == key.NUM_5:
             self.cam.swap_mode()
 

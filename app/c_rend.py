@@ -15,7 +15,7 @@ class Renderable:
         self.verts = []
 
     def __del__(self):
-        print("DELETING")
+        #print("DELETING")
         for v in self.verts:
             v = None
 

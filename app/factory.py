@@ -134,24 +134,26 @@ class Factory:
             Factory.instance_text = ColorizeFontGrp(1, Factory.shader, parent=Factory.cam)
         # main quad
         quadv = [0, 0, width, 0, width, height, 0, height]
-        inst = Instance()
+        inst = Instance(width, height)
         itr = TransformGrp(Factory.shader, parent=Factory.instance_coloring)
         itr.pos = [x, y]
         g = Primitive2D(Factory.shader, quadv, GL_QUADS, itr, (0.4, 0.4, 0.4, 0.2))
         ie = Factory.world.create_entity(inst, itr, g)
-        # pin
-        p = Pin()
-        tr = TransformGrp(Factory.shader, parent_transform=itr, parent=Factory.instance_coloring)
-        tr.pos = [-0.3, 2.0]
-        #tr.scale = [0.2, 0.2]
-        g = Primitive2D(Factory.shader, pin_quad, GL_QUADS, tr, (0.4, 0.4, 0.8, 0.7))
-        pe = Factory.world.create_entity(p, tr, g)
-        # label
-        tr = TransformGrp(Factory.shader, parent_transform=tr, parent=Factory.instance_text)
-        tr.pos = [0.5, 0.0]
-        tr.scale = [0.1, 0.1]
-        l = pyglet.text.Label('Pin_Name', batch=Renderable.batch, group=tr,
-                          font_size=10, color=(1.0, 0.0, 0.0, 0.5),
-                          x=0, y=0)
-        Factory.world.create_entity(tr, l)
+        for i in range(10):
+            # pin
+            p = Pin()
+            ptr = TransformGrp(Factory.shader, parent_transform=itr, parent=Factory.instance_coloring)
+            ptr.pos = [-0.3, 2.0+i*1.5]
+            # tr.scale = [0.2, 0.2]
+            g = Primitive2D(Factory.shader, pin_quad, GL_QUADS, ptr, (0.4, 0.4, 0.8, 0.7))
+            pe = Factory.world.create_entity(p, ptr, g)
+            # label
+            tr = TransformGrp(Factory.shader, parent_transform=ptr, parent=Factory.instance_text)
+            tr.pos = [0.5, 0.0]
+            tr.scale = [0.1, 0.1]
+            pin_name = "Pin_Name_"+str(i)
+            l = pyglet.text.Label(pin_name, batch=Renderable.batch, group=tr,
+                              font_size=10, color=(1.0, 0.0, 0.0, 0.5),
+                              x=0, y=0)
+            Factory.world.create_entity(tr, l)
         return

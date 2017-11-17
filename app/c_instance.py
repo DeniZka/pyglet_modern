@@ -4,13 +4,16 @@ class Pin:
         wire = None  # attached wire, identification of one of wire's end
         return
 
-    def connect_wire(self, wire):
+    def connect_node(self, node):
+
         return
 
-    def disconnect_wire(self):
+    def disconnect_node(self):
         return
 
 
 class Instance:
-    pass
+    def __init__(self, w, h):
+        self.w = w
+        self.h = h
 

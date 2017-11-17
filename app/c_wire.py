@@ -33,6 +33,7 @@ class Node:
         self.x = x
         self.y = y
         self.segs = []
+        self.pin = None
 
     #def __del__(self):
         #self.segs.
@@ -42,6 +43,23 @@ class Node:
 
     def del_seg(self, segment):
         self.segs.remove(segment)
+
+    def attach(self, pin):
+        """
+        Attach this node to
+        :param pin:
+        :return:
+        """
+        self.pin = pin
+        self.pin.connect_node(self)
+
+    def detach(self):
+        self.pin.disconnect_node()
+        self.pin = None
+
+    @property
+    def count(self):
+        return len(self.segs)
 
 
 class Wire:

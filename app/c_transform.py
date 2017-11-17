@@ -33,6 +33,7 @@ class TransformGrp(pyglet.graphics.Group):
         """
         if self.dirty:
             self._trfm = self._tm * self._rm * self._sm
+            self.dirty = False
         if self._ptr and glob:
             self._gtr = self._ptr.transform * self._trfm
             return self._gtr
@@ -63,6 +64,14 @@ class TransformGrp(pyglet.graphics.Group):
     @property
     def pos(self):
         return self._pos
+
+    @property
+    def gpos(self):
+        if self._ptr:
+            pp = self._ptr.pos
+            return [self._ptr[0] + pp[0], self._ptr[1] + pp[1]]
+        else:
+            return self._pos
 
     @pos.setter
     def pos(self, val):

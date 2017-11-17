@@ -4,6 +4,8 @@ from app.c_rend import Primitive2D
 from app.c_wire import Wire
 from app.c_camera import CameraGrp
 from app.factory import Factory
+from app.c_transform import TransformGrp
+from app.c_instance import Pin, Instance
 
 
 class EditorProcessor(esper.Processor):
@@ -24,6 +26,8 @@ class EditorProcessor(esper.Processor):
         self.drag_wire = None
         self.drag_line = None
         self.sel = []
+        self.sel_inst = None  # selected instance
+        self.sel_trfm = None  # instance transform
 
         self.contact_list = [] # list of entities, Primitives and Wires that could be used. Don't want to repeat on drag
         self.except_list = []
@@ -46,7 +50,13 @@ class EditorProcessor(esper.Processor):
         return False
 
     def _get_instance(self, x, y):
-
+        dist = EditorProcessor.PICK_DIST / self.cam.zoom
+        for e, (t, i) in self.world.get_components(TransformGrp, Instance):
+            pos = t.pos
+            if pos[0] < x < pos[0] + i.w and \
+               pos[1] < y < pos[1] + i.h:
+                self.sel_inst = i
+                self.sel_trfm = t
         return False
 
     def _update_sel_scrn(self, x, y):
